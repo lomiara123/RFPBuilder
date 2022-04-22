@@ -15,6 +15,10 @@ namespace RFPBuilder
         public Form1()
         {
             InitializeComponent();
+            if(!DBHandler.checkIfDbExists())
+            {
+                DBHandler.createDB();
+            }
         }
     }
 }
