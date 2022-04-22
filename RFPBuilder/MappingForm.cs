@@ -10,15 +10,12 @@ using System.Windows.Forms;
 
 namespace RFPBuilder
 {
-    public partial class Form1 : Form
+    public partial class MappingForm : Form
     {
-        public Form1()
+        public MappingForm()
         {
             InitializeComponent();
-            if(!DBHandler.checkIfDbExists())
-            {
-                DBHandler.createDB();
-            }
+            // this.moduleMapBindingSource.Filter = 'RFPName = SOMEVALUE'
         }
     }
 }
