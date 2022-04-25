@@ -34,6 +34,8 @@
             this.Modules = new MetroFramework.Controls.MetroTabPage();
             this.Responses = new MetroFramework.Controls.MetroTabPage();
             this.Position = new MetroFramework.Controls.MetroTabPage();
+            this.button2 = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.Mapping.SuspendLayout();
             this.SuspendLayout();
@@ -41,6 +43,8 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(233)))));
+            this.panel1.Controls.Add(this.button2);
+            this.panel1.Controls.Add(this.btnClose);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -67,7 +71,7 @@
             this.Mapping.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Mapping.Location = new System.Drawing.Point(0, 80);
             this.Mapping.Name = "Mapping";
-            this.Mapping.SelectedIndex = 0;
+            this.Mapping.SelectedIndex = 2;
             this.Mapping.Size = new System.Drawing.Size(760, 359);
             this.Mapping.TabIndex = 1;
             this.Mapping.UseSelectable = true;
@@ -115,6 +119,36 @@
             this.Position.VerticalScrollbarHighlightOnWheel = false;
             this.Position.VerticalScrollbarSize = 10;
             // 
+            // button2
+            // 
+            this.button2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button2.FlatAppearance.BorderSize = 0;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 28.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.ForeColor = System.Drawing.Color.White;
+            this.button2.Location = new System.Drawing.Point(635, 0);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(63, 80);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "-";
+            this.button2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // btnClose
+            // 
+            this.btnClose.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnClose.FlatAppearance.BorderSize = 0;
+            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.ForeColor = System.Drawing.Color.White;
+            this.btnClose.Location = new System.Drawing.Point(698, 0);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(62, 80);
+            this.btnClose.TabIndex = 3;
+            this.btnClose.Text = "X";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
             // MappingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -140,5 +174,7 @@
         private MetroFramework.Controls.MetroTabPage Modules;
         private MetroFramework.Controls.MetroTabPage Responses;
         private MetroFramework.Controls.MetroTabPage Position;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnClose;
     }
 }
