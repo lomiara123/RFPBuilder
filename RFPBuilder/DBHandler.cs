@@ -72,7 +72,31 @@ namespace RFPBuilder
             string insertModuleMapping = "insert into ModuleMap" +
                                          "(RFPName, ModuleID) " +
                                          "VALUES ";
-            
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (var command = new SqlCommand(selectModules, conn))
+                {
+                    var reader = command.ExecuteReader();
+
+                    while(reader.Read())
+                    {
+                        string tmp = "('" + rfpName + "', '" + reader["ModuleId"].ToString() + "'),";
+
+                        insertModuleMapping += tmp;
+                    }
+
+                    insertModuleMapping = insertModuleMapping.Remove(insertModuleMapping.Length - 1);
+
+                    reader.Close();
+                }
+
+                using (var command = new SqlCommand(insertModuleMapping, conn))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         public static void createDB()
