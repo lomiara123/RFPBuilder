@@ -33,13 +33,12 @@ namespace RFPBuilder
             {
                 DBHandler.createDB();
             }
-            /*
             else
             {
                 DBHandler.deleteDB();
                 DBHandler.createDB();
             }
-            */
+            
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -56,11 +55,6 @@ namespace RFPBuilder
                     filePath = openFileDialog.FileName;
                     fileName = Path.GetFileNameWithoutExtension(filePath);
                     RFPName = fileName;
-
-                    if (DBHandler.checkModuleMappingExist(fileName))
-                    {
-                        DBHandler.initModuleMapping(RFPName);
-                    }
                 }
             }
         }
