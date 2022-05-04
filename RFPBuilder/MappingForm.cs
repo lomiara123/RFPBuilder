@@ -14,37 +14,66 @@ namespace RFPBuilder
     public partial class MappingForm : Form
     {
         public string RFPName { get; set; }
-        SqlDataAdapter dataAdapter;
-        SqlCommandBuilder sqlCommandBuilder;
+        SqlDataAdapter modulesDataAdapter, responsesDataAdapter, positionDataAdapter, adapter;
+        SqlCommandBuilder sqlModulesCommandBuilder;
         SqlConnection connection;
         DataSet ds;
 
         public MappingForm()
         {
             InitializeComponent();
-            // this.moduleMapBindingSource.Filter = 'RFPName = SOMEVALUE'
 
             string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
-            string sql = "select * " +
-                          "from ModuleMap where ModuleId = 'GL'";
-            DBHandler.initModuleMapping("asd");
+            string sqlModuleMap = "select * " +
+                          "from ModuleMap";
+            string sqlResponseMap = "select * " +
+                          "from ResponseMap";
+            string sqlPositionMap = "select * " +
+                          "from PositionMap";
+
+            string sql = "select * from ModuleMap; select * from ResponseMap; select * from PositionMap";
+
             connection = new SqlConnection(connectionString);
-            
-            dataAdapter = new SqlDataAdapter(sql, connection);
             ds = new DataSet();
+
             connection.Open();
-            dataAdapter.Fill(ds, "TEST");
 
-            sqlCommandBuilder = new SqlCommandBuilder(dataAdapter);
-            moduleMapDataGridView.DataSource = ds;
-            moduleMapDataGridView.DataMember = "TEST";
+            adapter = new SqlDataAdapter(sql, connection);
+            
+            adapter.TableMappings.Add("ModuleMap", "Modules");
+            adapter.TableMappings.Add("ResponseMap", "Responses");
+            adapter.TableMappings.Add("PositionMap", "Positions");
 
+
+            adapter.Fill(ds);
+            /*
+            modulesDataAdapter = new SqlDataAdapter(sqlModuleMap, connection);
+            modulesDataAdapter.Fill(ds, "Modules");
+
+            responsesDataAdapter = new SqlDataAdapter(sqlResponseMap, connection);
+            responsesDataAdapter.Fill(ds, "Responses");
+
+            positionDataAdapter = new SqlDataAdapter(sqlPositionMap, connection);
+            positionDataAdapter.Fill(ds, "Positions");
+            */
+            sqlModulesCommandBuilder = new SqlCommandBuilder(adapter);
+            
+            ModulesMapGrid.DataSource = ds;
+            ModulesMapGrid.DataMember = "Table";
+
+            ResponsesGrid.DataSource = ds;
+            ResponsesGrid.DataMember = "Table1";
+
+            PositionMapGrid.DataSource = ds;
+            PositionMapGrid.DataMember = "Table2";
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            dataAdapter.UpdateCommand = sqlCommandBuilder.GetUpdateCommand();
-            dataAdapter.Update(ds, "TEST");
+            adapter.UpdateCommand = sqlModulesCommandBuilder.GetUpdateCommand();
+            adapter.Update(ds, "Table");
+            adapter.Update(ds, "Table1");
+            adapter.Update(ds, "Table2");
             this.Close();
         }
     }

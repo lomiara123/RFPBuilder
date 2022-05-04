@@ -34,13 +34,21 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Mapping = new MetroFramework.Controls.MetroTabControl();
             this.Modules = new MetroFramework.Controls.MetroTabPage();
-            this.Responses = new MetroFramework.Controls.MetroTabPage();
-            this.Position = new MetroFramework.Controls.MetroTabPage();
+            this.ModulesMapGrid = new System.Windows.Forms.DataGridView();
             this.moduleMapDataGridView = new System.Windows.Forms.DataGridView();
+            this.Responses = new MetroFramework.Controls.MetroTabPage();
+            this.ResponsesGrid = new System.Windows.Forms.DataGridView();
+            this.Position = new MetroFramework.Controls.MetroTabPage();
+            this.PositionMapGrid = new System.Windows.Forms.DataGridView();
             this.panel1.SuspendLayout();
             this.Mapping.SuspendLayout();
             this.Modules.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ModulesMapGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.moduleMapDataGridView)).BeginInit();
+            this.Responses.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ResponsesGrid)).BeginInit();
+            this.Position.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PositionMapGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -106,11 +114,12 @@
             this.Mapping.Name = "Mapping";
             this.Mapping.SelectedIndex = 0;
             this.Mapping.Size = new System.Drawing.Size(786, 345);
-            this.Mapping.TabIndex = 1;
+            this.Mapping.TabIndex = 0;
             this.Mapping.UseSelectable = true;
             // 
             // Modules
             // 
+            this.Modules.Controls.Add(this.ModulesMapGrid);
             this.Modules.Controls.Add(this.moduleMapDataGridView);
             this.Modules.HorizontalScrollbarBarColor = true;
             this.Modules.HorizontalScrollbarHighlightOnWheel = false;
@@ -124,34 +133,18 @@
             this.Modules.VerticalScrollbarHighlightOnWheel = false;
             this.Modules.VerticalScrollbarSize = 10;
             // 
-            // Responses
+            // ModulesMapGrid
             // 
-            this.Responses.HorizontalScrollbarBarColor = true;
-            this.Responses.HorizontalScrollbarHighlightOnWheel = false;
-            this.Responses.HorizontalScrollbarSize = 10;
-            this.Responses.Location = new System.Drawing.Point(4, 38);
-            this.Responses.Name = "Responses";
-            this.Responses.Size = new System.Drawing.Size(752, 317);
-            this.Responses.TabIndex = 1;
-            this.Responses.Text = "Responses";
-            this.Responses.VerticalScrollbarBarColor = true;
-            this.Responses.VerticalScrollbarHighlightOnWheel = false;
-            this.Responses.VerticalScrollbarSize = 10;
-            // 
-            // Position
-            // 
-            this.Position.HorizontalScrollbarBarColor = true;
-            this.Position.HorizontalScrollbarHighlightOnWheel = false;
-            this.Position.HorizontalScrollbarSize = 10;
-            this.Position.Location = new System.Drawing.Point(4, 38);
-            this.Position.Name = "Position";
-            this.Position.Size = new System.Drawing.Size(752, 317);
-            this.Position.Style = MetroFramework.MetroColorStyle.Green;
-            this.Position.TabIndex = 2;
-            this.Position.Text = "Position";
-            this.Position.VerticalScrollbarBarColor = true;
-            this.Position.VerticalScrollbarHighlightOnWheel = false;
-            this.Position.VerticalScrollbarSize = 10;
+            this.ModulesMapGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.ModulesMapGrid.BackgroundColor = System.Drawing.Color.White;
+            this.ModulesMapGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ModulesMapGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ModulesMapGrid.Location = new System.Drawing.Point(0, 0);
+            this.ModulesMapGrid.Name = "ModulesMapGrid";
+            this.ModulesMapGrid.RowHeadersWidth = 51;
+            this.ModulesMapGrid.RowTemplate.Height = 24;
+            this.ModulesMapGrid.Size = new System.Drawing.Size(778, 303);
+            this.ModulesMapGrid.TabIndex = 3;
             // 
             // moduleMapDataGridView
             // 
@@ -165,6 +158,63 @@
             this.moduleMapDataGridView.RowTemplate.Height = 24;
             this.moduleMapDataGridView.Size = new System.Drawing.Size(778, 303);
             this.moduleMapDataGridView.TabIndex = 2;
+            // 
+            // Responses
+            // 
+            this.Responses.Controls.Add(this.ResponsesGrid);
+            this.Responses.HorizontalScrollbarBarColor = true;
+            this.Responses.HorizontalScrollbarHighlightOnWheel = false;
+            this.Responses.HorizontalScrollbarSize = 10;
+            this.Responses.Location = new System.Drawing.Point(4, 38);
+            this.Responses.Name = "Responses";
+            this.Responses.Size = new System.Drawing.Size(778, 303);
+            this.Responses.TabIndex = 1;
+            this.Responses.Text = "Responses";
+            this.Responses.VerticalScrollbarBarColor = true;
+            this.Responses.VerticalScrollbarHighlightOnWheel = false;
+            this.Responses.VerticalScrollbarSize = 10;
+            // 
+            // ResponsesGrid
+            // 
+            this.ResponsesGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.ResponsesGrid.BackgroundColor = System.Drawing.Color.White;
+            this.ResponsesGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ResponsesGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResponsesGrid.Location = new System.Drawing.Point(0, 0);
+            this.ResponsesGrid.Name = "ResponsesGrid";
+            this.ResponsesGrid.RowHeadersWidth = 51;
+            this.ResponsesGrid.RowTemplate.Height = 24;
+            this.ResponsesGrid.Size = new System.Drawing.Size(778, 303);
+            this.ResponsesGrid.TabIndex = 2;
+            // 
+            // Position
+            // 
+            this.Position.Controls.Add(this.PositionMapGrid);
+            this.Position.HorizontalScrollbarBarColor = true;
+            this.Position.HorizontalScrollbarHighlightOnWheel = false;
+            this.Position.HorizontalScrollbarSize = 10;
+            this.Position.Location = new System.Drawing.Point(4, 38);
+            this.Position.Name = "Position";
+            this.Position.Size = new System.Drawing.Size(778, 303);
+            this.Position.Style = MetroFramework.MetroColorStyle.Green;
+            this.Position.TabIndex = 2;
+            this.Position.Text = "Position";
+            this.Position.VerticalScrollbarBarColor = true;
+            this.Position.VerticalScrollbarHighlightOnWheel = false;
+            this.Position.VerticalScrollbarSize = 10;
+            // 
+            // PositionMapGrid
+            // 
+            this.PositionMapGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.PositionMapGrid.BackgroundColor = System.Drawing.Color.White;
+            this.PositionMapGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.PositionMapGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PositionMapGrid.Location = new System.Drawing.Point(0, 0);
+            this.PositionMapGrid.Name = "PositionMapGrid";
+            this.PositionMapGrid.RowHeadersWidth = 51;
+            this.PositionMapGrid.RowTemplate.Height = 24;
+            this.PositionMapGrid.Size = new System.Drawing.Size(778, 303);
+            this.PositionMapGrid.TabIndex = 2;
             // 
             // MappingForm
             // 
@@ -180,7 +230,12 @@
             this.panel1.PerformLayout();
             this.Mapping.ResumeLayout(false);
             this.Modules.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ModulesMapGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.moduleMapDataGridView)).EndInit();
+            this.Responses.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ResponsesGrid)).EndInit();
+            this.Position.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.PositionMapGrid)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -196,5 +251,8 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.DataGridView moduleMapDataGridView;
+        private System.Windows.Forms.DataGridView ModulesMapGrid;
+        private System.Windows.Forms.DataGridView ResponsesGrid;
+        private System.Windows.Forms.DataGridView PositionMapGrid;
     }
 }

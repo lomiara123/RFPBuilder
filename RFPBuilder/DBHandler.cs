@@ -52,6 +52,52 @@ namespace RFPBuilder
 
             using (var conn = new SqlConnection(connectionString))
             {
+                conn.Open();
+
+                using (var command = new SqlCommand(sql, conn))
+                {
+                    command.Parameters.AddWithValue("@rfpName", rfpName);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        return reader.HasRows;
+                    }
+                }
+            }
+        }
+
+        public static bool checkResponseMappingExist(string rfpName)
+        {
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string sql = "select * " +
+                          "from ResponseMap " +
+                          "where RFPName = @rfpName";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (var command = new SqlCommand(sql, conn))
+                {
+                    command.Parameters.AddWithValue("@rfpName", rfpName);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        return reader.HasRows;
+                    }
+                }
+            }
+        }
+
+        public static bool checkPositionMappingExist(string rfpName)
+        {
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string sql = "select * " +
+                          "from PositionMap " +
+                          "where RFPName = @rfpName";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
                 using (var command = new SqlCommand(sql, conn))
                 {
                     command.Parameters.AddWithValue("@rfpName", rfpName);
@@ -83,6 +129,40 @@ namespace RFPBuilder
                     while(reader.Read())
                     {
                         string tmp = "('" + rfpName + "', '" + reader["ModuleId"].ToString() + "'),";
+
+                        insertModuleMapping += tmp;
+                    }
+
+                    insertModuleMapping = insertModuleMapping.Remove(insertModuleMapping.Length - 1);
+
+                    reader.Close();
+                }
+
+                using (var command = new SqlCommand(insertModuleMapping, conn))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public static void initResponseMapping(string rfpName)
+        {
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string selectModules = "select * " +
+                                   "from ResponseLookup";
+            string insertModuleMapping = "insert into ResponseMap" +
+                                         "(RFPName, ResponseMaster) " +
+                                         "VALUES ";
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (var command = new SqlCommand(selectModules, conn))
+                {
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        string tmp = "('" + rfpName + "', '" + reader["ResponseId"].ToString() + "'),";
 
                         insertModuleMapping += tmp;
                     }
@@ -160,7 +240,6 @@ namespace RFPBuilder
                                     "RFPName varchar(255) NOT NULL," +
                                     "ResponseMaster varchar(255) NOT NULL, " +
                                     "ResponseRFP varchar(255), " +
-                                    "Definition varchar(max)" +
                                  "); ";
             using (var command = new SqlCommand(createTable, connection))
             {
@@ -177,6 +256,7 @@ namespace RFPBuilder
                                     "Requirement varchar(255), " +
                                     "Response varchar(255)," +
                                     "Comments varchar(max)," +
+                                    "SkipRows varchar(255), " +
                                     "CONSTRAINT PK_RfpNameSheetName PRIMARY KEY(RFPName, SheetName) " +
                                  "); ";
             using (var command = new SqlCommand(createTable, connection))

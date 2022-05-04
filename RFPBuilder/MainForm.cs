@@ -66,6 +66,17 @@ namespace RFPBuilder
 
         private void btnMapping_Click(object sender, EventArgs e)
         {
+            RFPName = "TEST";
+            if (!DBHandler.checkModuleMappingExist(RFPName))
+            {
+                DBHandler.initModuleMapping(RFPName);
+            }
+
+            if (!DBHandler.checkResponseMappingExist(RFPName))
+            {
+                DBHandler.initResponseMapping(RFPName);
+            }
+
             this.Hide();
             MappingForm mappingForm = new MappingForm();
             mappingForm.RFPName = RFPName;
