@@ -14,7 +14,7 @@ namespace RFPBuilder
     public partial class MappingForm : Form
     {
         public string RFPName { get; set; }
-        SqlDataAdapter modulesDataAdapter, responsesDataAdapter, positionDataAdapter, adapter;
+        SqlDataAdapter adapter;
         SqlCommandBuilder sqlModulesCommandBuilder;
         SqlConnection connection;
         DataSet ds;
@@ -24,14 +24,11 @@ namespace RFPBuilder
             InitializeComponent();
 
             string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
-            string sqlModuleMap = "select * " +
-                          "from ModuleMap";
-            string sqlResponseMap = "select * " +
-                          "from ResponseMap";
-            string sqlPositionMap = "select * " +
-                          "from PositionMap";
 
-            string sql = "select * from ModuleMap; select * from ResponseMap; select * from PositionMap";
+            string sql = "select * from ModuleMap;"   +
+                         "select * from ResponseMap;" +
+                         "select * from PositionMap;" +
+                         "select * from ModuleLookup";
 
             connection = new SqlConnection(connectionString);
             ds = new DataSet();
@@ -46,20 +43,19 @@ namespace RFPBuilder
 
 
             adapter.Fill(ds);
-            /*
-            modulesDataAdapter = new SqlDataAdapter(sqlModuleMap, connection);
-            modulesDataAdapter.Fill(ds, "Modules");
-
-            responsesDataAdapter = new SqlDataAdapter(sqlResponseMap, connection);
-            responsesDataAdapter.Fill(ds, "Responses");
-
-            positionDataAdapter = new SqlDataAdapter(sqlPositionMap, connection);
-            positionDataAdapter.Fill(ds, "Positions");
-            */
             sqlModulesCommandBuilder = new SqlCommandBuilder(adapter);
-            
+            DataGridViewComboBoxColumn dgvCB = new DataGridViewComboBoxColumn();
+            dgvCB.Name = "Table3.ModuleId";
+            dgvCB.HeaderText = "Table3.ModuleId";
+            dgvCB.DataPropertyName = "Table3.ModuleId";
+              DBHandler.populateModuleColumn(dgvCB);
+
             ModulesMapGrid.DataSource = ds;
             ModulesMapGrid.DataMember = "Table";
+            ModulesMapGrid.Columns["ModuleId"].Visible = false;
+            ModulesMapGrid.Columns.Add(dgvCB);
+            ModulesMapGrid.Columns["Table3.ModuleId"].DisplayIndex = 1;
+            ModulesMapGrid.Columns["ModuleNameRFP"].DisplayIndex = 2;
 
             ResponsesGrid.DataSource = ds;
             ResponsesGrid.DataMember = "Table1";

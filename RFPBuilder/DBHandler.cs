@@ -205,7 +205,6 @@ namespace RFPBuilder
                                  "CREATE TABLE MasterRFP ( " +
                                     "RFPName varchar(255) NOT NULL," +
                                     "ModuleID varchar(255) NOT NULL, " +
-                                    "ModuleName varchar(255), " +
                                     "ReqID varchar(255), " +
                                     "Criticality varchar(255), " +
                                     "Response varchar(255), " +
@@ -225,7 +224,8 @@ namespace RFPBuilder
                                     "RFPName varchar(255) NOT NULL," +
                                     "ModuleID varchar(255) NOT NULL, " +
                                     "ModuleNameRFP varchar(255), " +
-                                    "CONSTRAINT PK_RfpNameModuleId PRIMARY KEY(RFPName, ModuleID) " +
+                                    "CONSTRAINT PK_RfpNameModuleId PRIMARY KEY(RFPName, ModuleID), " +
+                                    "CONSTRAINT FK_ModuleLookup FOREIGN KEY (ModuleId) REFERENCES ModuleLookup(ModuleId)" + 
                                  "); ";
             using (var command = new SqlCommand(createTable, connection))
             {
@@ -253,11 +253,12 @@ namespace RFPBuilder
                                  "CREATE TABLE PositionMap ( " +
                                     "RFPName varchar(255) NOT NULL," +
                                     "SheetName varchar(255) NOT NULL, " +
+                                    "ModuleId varchar(255) NOT NULL, " +
                                     "Requirement varchar(255), " +
-                                    "Response varchar(255)," +
-                                    "Comments varchar(max)," +
+                                    "Response varchar(255), " +
+                                    "Comments varchar(max), " +
                                     "SkipRows varchar(255), " +
-                                    "CONSTRAINT PK_RfpNameSheetName PRIMARY KEY(RFPName, SheetName) " +
+                                    "CONSTRAINT PK_RfpNameSheetName PRIMARY KEY(RFPName, SheetName, ModuleId) " +
                                  "); ";
             using (var command = new SqlCommand(createTable, connection))
             {
@@ -280,7 +281,8 @@ namespace RFPBuilder
             {
                 { "AP" , "Accounts payable" },
                 { "AR" , "Accounts receivable" },
-                { "GL" , "General ledger" }
+                { "GL" , "General ledger" },
+                { "TEST", "TEST" }
             };
 
             foreach (var key in map)
@@ -331,6 +333,98 @@ namespace RFPBuilder
             using (var command = new SqlCommand(insertValues, connection))
             {
                 int recordsAffectd = command.ExecuteNonQuery();
+            }
+        }
+
+        public static int executeCommand(string sql)
+        {
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            int ret = 0;
+            using (var conn = new SqlConnection(connectionString))
+            {
+                using (var command = new SqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    ret = command.ExecuteNonQuery();
+                }
+            }
+
+            return ret;
+        }
+
+        public static void saveRFPtoDB(ExcelManager manager, string rfpName)
+        {
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string insert = "insert into MasterRFP " +
+                                   "(RFPName, ModuleId, ReqId, Criticality, Response, Comments)" +
+                                   " values " +
+                                   "(@RFPName, @ModuleId, @ReqId, @Criticality, @Response, @Comments)";
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var command = new SqlCommand(insert, conn))
+                {
+                    while (manager.nextRequirement())
+                    {
+                        command.Parameters.Clear();
+                        command.Parameters.AddWithValue("@RFPName", rfpName);
+                        command.Parameters.AddWithValue("@ModuleId", manager.moduleId);
+                        command.Parameters.AddWithValue("@ReqId", manager.requirement);
+                        command.Parameters.AddWithValue("@Criticality", manager.criticality != null ? manager.criticality : (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Response", manager.response != null ? manager.response : (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Comments", manager.comments != null ? manager.comments : (object)DBNull.Value);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        public static void populateModuleColumn(System.Windows.Forms.DataGridViewComboBoxColumn dgvCB)
+        {
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string selectModules = "select *" +
+                            "from ModuleLookup";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (var command = new SqlCommand(selectModules, conn))
+                {
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        dgvCB.Items.Add(reader["ModuleId"].ToString());
+                    }
+
+                    reader.Close();
+                }
+            }
+        }
+
+        public static void populateModuleCell(System.Windows.Forms.DataGridViewComboBoxCell dgvCB)
+        {
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string selectModules = "select *" +
+                            "from ModuleLookup";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                using (var command = new SqlCommand(selectModules, conn))
+                {
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        dgvCB.Items.Add(reader["ModuleId"].ToString());
+                        dgvCB.Value = reader["ModuleId"].ToString();
+                    }
+
+                    reader.Close();
+                }
             }
         }
     }
