@@ -99,7 +99,7 @@ namespace RFPBuilder
         private void btnSave_Click(object sender, EventArgs e)
         {
             ExcelManager manager = new ExcelManager(filePath);
-            manager.setWorksheet("4. Procurement", "Req #", "Response", "Comments", "Criticality", "0");
+            manager.setWorksheet("4. Procurement", "Req #", "Response", "Comments", "Criticality", "1-9");
             DBHandler.saveRFPtoDB(manager, RFPName);
         }
 

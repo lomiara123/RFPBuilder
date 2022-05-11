@@ -206,8 +206,8 @@ namespace RFPBuilder
                                     "RFPName varchar(255) NOT NULL," +
                                     "ModuleID varchar(255) NOT NULL, " +
                                     "ReqID varchar(255), " +
-                                    "Criticality varchar(255), " +
-                                    "Response varchar(255), " +
+                                    "Criticality varchar(max), " +
+                                    "Response varchar(max), " +
                                     "Comments varchar(max), " +
                                     "CONSTRAINT PK_RfpNameReqId PRIMARY KEY(RFPName, ReqId) " +
                                  "); ";
@@ -258,6 +258,7 @@ namespace RFPBuilder
                                     "Response varchar(255), " +
                                     "Comments varchar(max), " +
                                     "SkipRows varchar(255), " +
+                                    "Criticality varchar(255), " +
                                     "CONSTRAINT PK_RfpNameSheetName PRIMARY KEY(RFPName, SheetName, ModuleId) " +
                                  "); ";
             using (var command = new SqlCommand(createTable, connection))

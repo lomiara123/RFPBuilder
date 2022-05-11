@@ -27,9 +27,10 @@ namespace RFPBuilder
         ~ExcelManager()
         {
             xlWorkBook.Close();
+            xlApp.Quit();
         }
 
-        public void setWorksheet(string worksheet, string requirement, string response, string comments, string criticality, string skipRows)
+        public void setWorksheet(string worksheet, string requirement, string response, string comments, string criticality, string skipRowsStr)
         {
             xlWorkSheet = xlWorkBook.Sheets[worksheet];
             xlRange = xlWorkSheet.UsedRange;
@@ -42,7 +43,39 @@ namespace RFPBuilder
             response = "";
             comments = "";
             criticality = "";
+            initSkipRows(skipRowsStr);
         }
+
+        private void initSkipRows(string skipRowsStr)
+        {
+            skipRows = new HashSet<int>();
+            var rows = skipRowsStr.Split('\u002C'); //comma ,
+            foreach(var row in rows)
+            {
+                var periodArray = row.Split('\u002D'); //dash -
+                if (periodArray.Length > 1)
+                {
+                    int start = int.Parse(periodArray[0]);
+                    int end = int.Parse(periodArray[1]);
+                    while(start < end)
+                    {
+                        if(!skipRows.Contains(start))
+                        {
+                            skipRows.Add(start);
+                        }
+                        start++;
+                    }
+                } else
+                {
+                    int tmp = int.Parse(row);
+                    if (!skipRows.Contains(tmp))
+                    {
+                        skipRows.Add(tmp);
+                    }
+                }
+            }
+        }
+
         public bool nextRequirement()
         {
             while (row < xlRange.Rows.Count)
