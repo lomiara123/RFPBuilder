@@ -5,31 +5,29 @@ using System.Text;
 using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace RFPBuilder
 {
-    class RFPDocument
+    class RFPDocument:IDisposable
     {
         public string Path { get; }
         private Excel.Application xlApp;
         private Excel.Workbook xlWorkBook;
-        private Excel.Worksheet xlWorkSheet;
-        private Excel.Range xlRange;
 
         public IEnumerator<Module> GetEnumerator()
         {
-            SqlDataReader reader;
-            SqlCommand command = new SqlCommand();
-            reader = command.ExecuteReader(); 
+            DataTable dt = DBHandler.getPositionMap(System.IO.Path.GetFileNameWithoutExtension(Path));
             
-            while(reader.Read())
+            foreach(DataRow dr in dt.Rows)
             {
-                yield return new Module(xlWorkBook.Sheets[reader["SheetName"]].UsedRange, 
-                    reader["Requirement"].ToString(),
-                    reader["Response"].ToString(),
-                    reader["Comments"].ToString(),
-                    reader["Criticality"].ToString(),
-                    reader["SkipRows"].ToString());
+                yield return new Module("TEST",
+                    xlWorkBook.Sheets[dr["SheetName"].ToString()].UsedRange, 
+                    dr["Requirement"].ToString(),
+                    dr["Response"].ToString(),
+                    dr["Comments"].ToString(),
+                    dr["Criticality"].ToString(),
+                    dr["SkipRows"].ToString());
             }
         }
 
@@ -37,7 +35,21 @@ namespace RFPBuilder
         {
             Path = path;
             xlApp = new Excel.Application();
+            xlApp.DisplayAlerts = false;
             xlWorkBook = xlApp.Workbooks.Open(Path);
+        }
+        
+        public void Dispose()
+        {
+            xlWorkBook.Close();
+            xlApp.Quit();
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApp);
+        }
+
+        public void update()
+        {
+            xlWorkBook.Save();
         }
 
 

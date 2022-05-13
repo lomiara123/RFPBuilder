@@ -4,11 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace RFPBuilder
 {
     class DBHandler
     {
+        private static SqlCommandBuilder moduleBuilder, responseBuilder, positionBuilder;
+        private static SqlDataAdapter moduleAdapter, responseAdapter, positionAdapter;
+        private const string DB_CONNECTION = "";
+        private static SqlConnection connection;
         public static void deleteDB()
         {
             string connectionString = @"Server=localhost;Integrated security=SSPI;database=master";
@@ -240,6 +245,7 @@ namespace RFPBuilder
                                     "RFPName varchar(255) NOT NULL," +
                                     "ResponseMaster varchar(255) NOT NULL, " +
                                     "ResponseRFP varchar(255), " +
+                                    "CONSTRAINT PK_RfpNameResponse PRIMARY KEY(RFPName, ResponseMaster) " +
                                  "); ";
             using (var command = new SqlCommand(createTable, connection))
             {
@@ -353,7 +359,7 @@ namespace RFPBuilder
             return ret;
         }
 
-        public static void saveRFPtoDB(ExcelManager manager, string rfpName)
+        public static void saveRequirementToDb(string rfpName, string moduleid, Requirement requirement)
         {
             string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string insert = "insert into MasterRFP " +
@@ -365,44 +371,18 @@ namespace RFPBuilder
                 conn.Open();
                 using (var command = new SqlCommand(insert, conn))
                 {
-                    while (manager.nextRequirement())
-                    {
                         command.Parameters.Clear();
                         command.Parameters.AddWithValue("@RFPName", rfpName);
-                        command.Parameters.AddWithValue("@ModuleId", manager.moduleId);
-                        command.Parameters.AddWithValue("@ReqId", manager.requirement);
-                        command.Parameters.AddWithValue("@Criticality", manager.criticality != null ? manager.criticality : (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@Response", manager.response != null ? manager.response : (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@Comments", manager.comments != null ? manager.comments : (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@ModuleId", moduleid);
+                        command.Parameters.AddWithValue("@ReqId", requirement.Id);
+                        command.Parameters.AddWithValue("@Criticality", requirement.Criticality != null ? requirement.Criticality : (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Response", requirement.Response != null ? requirement.Response : (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Comments", requirement.Comments != null ? requirement.Comments : (object)DBNull.Value);
                         command.ExecuteNonQuery();
-                    }
                 }
             }
         }
 
-        public static void populateModuleColumn(System.Windows.Forms.DataGridViewComboBoxColumn dgvCB)
-        {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
-            string selectModules = "select *" +
-                            "from ModuleLookup";
-
-            using (var conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-
-                using (var command = new SqlCommand(selectModules, conn))
-                {
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        dgvCB.Items.Add(reader["ModuleId"].ToString());
-                    }
-
-                    reader.Close();
-                }
-            }
-        }
 
         public static void populateModuleCell(System.Windows.Forms.DataGridViewComboBoxCell dgvCB)
         {
@@ -427,6 +407,59 @@ namespace RFPBuilder
                     reader.Close();
                 }
             }
+        }
+
+        public static DataTable getPositionMap(string RFPName)
+        {
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string selectModules = "select *" +
+                            "from PositionMap";
+            DataTable dt = new DataTable();
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                SqlDataAdapter adapter = new SqlDataAdapter(selectModules, conn);
+
+                adapter.Fill(dt);
+            }
+
+            return dt;
+        }
+
+        public static DataSet getMapping(string RFPName)
+        {
+            DataSet ds = new DataSet();
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string sql = "select * from ModuleMap;";
+            string sql1 = "select * from ResponseMap;";
+            string sql2 = "select * from PositionMap;";
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            moduleAdapter = new SqlDataAdapter(sql, connection);
+            responseAdapter = new SqlDataAdapter(sql1, connection);
+            positionAdapter = new SqlDataAdapter(sql2, connection);
+
+            moduleAdapter.Fill(ds, "Module");
+            responseAdapter.Fill(ds, "Response");
+            positionAdapter.Fill(ds, "Position");
+
+            moduleBuilder = new SqlCommandBuilder(moduleAdapter);
+            responseBuilder = new SqlCommandBuilder(responseAdapter);
+            positionBuilder = new SqlCommandBuilder(positionAdapter);
+
+            return ds;
+        }
+
+        public static void updateMapping(DataSet ds)
+        {
+            moduleAdapter.UpdateCommand = moduleBuilder.GetUpdateCommand();
+            responseAdapter.UpdateCommand = responseBuilder.GetUpdateCommand();
+            positionAdapter.UpdateCommand = positionBuilder.GetUpdateCommand();
+            moduleAdapter.Update(ds, "Module");
+            responseAdapter.Update(ds, "Response");
+            positionAdapter.Update(ds, "Position");
         }
     }
 }

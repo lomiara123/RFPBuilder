@@ -12,16 +12,15 @@ namespace RFPBuilder
         Excel.Range xlRange;
         HashSet<int> SkipRows;
         int Requirement, Response, Comments, Criticality;
-
+        public string ModuleId;
+        public int row = 0;
         public IEnumerator<Requirement> GetEnumerator()
         {
-            int row = 0;
-
             while (row < xlRange.Rows.Count)
             {
                 row++;
 
-                if (SkipRows.Contains(row))
+                if (!SkipRows.Contains(row))
                 {
                     yield return new Requirement(xlRange.Cells[row, Requirement].Value2,
                                                  xlRange.Cells[row, Response].Value2,
@@ -31,8 +30,17 @@ namespace RFPBuilder
             }
         }
 
-        public Module(Excel.Range range, string requirement, string response, string comments, string criticality, string skipRows)
+        public void updateRequirement(Requirement requirement)
         {
+            xlRange.Cells[row, Requirement].Value = requirement.Id;
+            xlRange.Cells[row, Response].Value = requirement.Response;
+            xlRange.Cells[row, Comments].Value = requirement.Comments;
+            xlRange.Cells[row, Criticality].Value = requirement.Criticality;
+        }
+
+        public Module(string moduleId, Excel.Range range, string requirement, string response, string comments, string criticality, string skipRows)
+        {
+            ModuleId = moduleId;
             xlRange = range;
             Requirement = findColumnIndex(range,requirement);
             Response = findColumnIndex(range, response);

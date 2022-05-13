@@ -58,7 +58,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBHandler.cs" />
-    <Compile Include="ExcelManager.cs" />
     <Compile Include="MappingForm.cs">
       <SubType>Form</SubType>
     </Compile>

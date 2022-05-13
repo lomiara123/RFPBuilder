@@ -14,62 +14,28 @@ namespace RFPBuilder
     public partial class MappingForm : Form
     {
         public string RFPName { get; set; }
-        SqlDataAdapter adapter;
-        SqlCommandBuilder sqlModulesCommandBuilder;
-        SqlConnection connection;
         DataSet ds;
 
-        public MappingForm()
+        public MappingForm(string rfpName)
         {
+            RFPName = rfpName;
             InitializeComponent();
 
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
-
-            string sql = "select * from ModuleMap;"   +
-                         "select * from ResponseMap;" +
-                         "select * from PositionMap;" +
-                         "select * from ModuleLookup";
-
-            connection = new SqlConnection(connectionString);
-            ds = new DataSet();
-
-            connection.Open();
-
-            adapter = new SqlDataAdapter(sql, connection);
-            
-            adapter.TableMappings.Add("ModuleMap", "Modules");
-            adapter.TableMappings.Add("ResponseMap", "Responses");
-            adapter.TableMappings.Add("PositionMap", "Positions");
-
-
-            adapter.Fill(ds);
-            sqlModulesCommandBuilder = new SqlCommandBuilder(adapter);
-            DataGridViewComboBoxColumn dgvCB = new DataGridViewComboBoxColumn();
-            dgvCB.Name = "Table3.ModuleId";
-            dgvCB.HeaderText = "Table3.ModuleId";
-            dgvCB.DataPropertyName = "Table3.ModuleId";
-              DBHandler.populateModuleColumn(dgvCB);
+            ds = DBHandler.getMapping(RFPName);
 
             ModulesMapGrid.DataSource = ds;
-            ModulesMapGrid.DataMember = "Table";
-            ModulesMapGrid.Columns["ModuleId"].Visible = false;
-            ModulesMapGrid.Columns.Add(dgvCB);
-            ModulesMapGrid.Columns["Table3.ModuleId"].DisplayIndex = 1;
-            ModulesMapGrid.Columns["ModuleNameRFP"].DisplayIndex = 2;
+            ModulesMapGrid.DataMember = "Module";
 
             ResponsesGrid.DataSource = ds;
-            ResponsesGrid.DataMember = "Table1";
+            ResponsesGrid.DataMember = "Response";
 
             PositionMapGrid.DataSource = ds;
-            PositionMapGrid.DataMember = "Table2";
+            PositionMapGrid.DataMember = "Position";
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            adapter.UpdateCommand = sqlModulesCommandBuilder.GetUpdateCommand();
-            adapter.Update(ds, "Table");
-            adapter.Update(ds, "Table1");
-            adapter.Update(ds, "Table2");
+            DBHandler.updateMapping(ds);
             this.Close();
         }
     }

@@ -32,7 +32,20 @@ namespace RFPBuilder
                 DBHandler.deleteDB();
                 DBHandler.createDB();
             }
-            
+            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+            string insert = "insert into PositionMap " +
+                                   "(RFPName, SheetName, ModuleId, Requirement, Response, Comments, SkipRows, Criticality)" +
+                                   " values " +
+                                   "('test', '4. Procurement', 'proc', 'Req #', 'Response', 'Comments', '1-9', 'Criticality')," +
+                                   "('test', '5. Contract Management', 'proc', 'Req #', 'Response', 'Comments', '1-9', 'Criticality')";
+            using (var conn = new System.Data.SqlClient.SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var command = new System.Data.SqlClient.SqlCommand(insert, conn))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -72,8 +85,7 @@ namespace RFPBuilder
             }
 
             this.Hide();
-            MappingForm mappingForm = new MappingForm();
-            mappingForm.RFPName = RFPName;
+            MappingForm mappingForm = new MappingForm(RFPName);
             mappingForm.ShowDialog();
             this.Show();
         }
@@ -98,10 +110,33 @@ namespace RFPBuilder
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            ExcelManager manager = new ExcelManager(filePath);
-            manager.setWorksheet("4. Procurement", "Req #", "Response", "Comments", "Criticality", "1-9");
-            DBHandler.saveRFPtoDB(manager, RFPName);
+            RFPDocument rfpDocument = new RFPDocument(filePath);
+            foreach (var module in rfpDocument)
+            {
+                foreach (var requirement in module)
+                {
+                    DBHandler.saveRequirementToDb(RFPName, module.ModuleId, requirement);
+                }
+            }
+
         }
 
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            using (RFPDocument rfpDocument = new RFPDocument(filePath))
+            {
+                foreach (var module in rfpDocument)
+                {
+                    foreach (var requirement in module)
+                    {
+                        requirement.Comments = "random text";
+                        module.updateRequirement(requirement);
+                    }
+                }
+                rfpDocument.update();
+            }
+            
+            File.SetLastWriteTime(filePath, DateTime.Now);
+        }
     }
 }

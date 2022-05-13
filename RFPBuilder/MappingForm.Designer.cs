@@ -112,7 +112,7 @@
             this.Mapping.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Mapping.Location = new System.Drawing.Point(0, 100);
             this.Mapping.Name = "Mapping";
-            this.Mapping.SelectedIndex = 0;
+            this.Mapping.SelectedIndex = 2;
             this.Mapping.Size = new System.Drawing.Size(786, 345);
             this.Mapping.TabIndex = 0;
             this.Mapping.UseSelectable = true;
@@ -221,10 +221,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(786, 445);
+            this.ControlBox = false;
             this.Controls.Add(this.Mapping);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MappingForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

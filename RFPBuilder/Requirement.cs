@@ -8,10 +8,10 @@ namespace RFPBuilder
 {
     class Requirement
     {
-        public string Id { get; }
-        public string Response { get; }
-        public string Comments { get; }
-        public string Criticality { get; }
+        public string Id { get; set; }
+        public string Response { get; set; }
+        public string Comments { get; set; }
+        public string Criticality { get; set; }
 
         public Requirement()
         {
