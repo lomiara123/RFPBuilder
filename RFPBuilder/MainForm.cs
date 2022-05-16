@@ -16,7 +16,6 @@ namespace RFPBuilder
         public static extern bool ReleaseCapture();
 
         string filePath = string.Empty;
-        string fileName = string.Empty;
         string RFPName = string.Empty;
 
         public MainForm()
@@ -36,8 +35,7 @@ namespace RFPBuilder
             string insert = "insert into PositionMap " +
                                    "(RFPName, SheetName, ModuleId, Requirement, Response, Comments, SkipRows, Criticality)" +
                                    " values " +
-                                   "('test', '4. Procurement', 'proc', 'Req #', 'Response', 'Comments', '1-9', 'Criticality')," +
-                                   "('test', '5. Contract Management', 'proc', 'Req #', 'Response', 'Comments', '1-9', 'Criticality')";
+                                   "('test', '4. Procurement', 'proc', 'Req #', 'Response', 'Comments', '1-9', 'Criticality')";
             using (var conn = new System.Data.SqlClient.SqlConnection(connectionString))
             {
                 conn.Open();
@@ -52,7 +50,6 @@ namespace RFPBuilder
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = "c:\\";
                 openFileDialog.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
@@ -60,20 +57,18 @@ namespace RFPBuilder
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     filePath = openFileDialog.FileName;
-                    fileName = Path.GetFileNameWithoutExtension(filePath);
-                    RFPName = fileName;
+                    RFPName = Path.GetFileNameWithoutExtension(filePath);
                 }
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         private void btnMapping_Click(object sender, EventArgs e)
         {
-          //  RFPName = "TEST";
             if (!DBHandler.checkModuleMappingExist(RFPName))
             {
                 DBHandler.initModuleMapping(RFPName);
@@ -110,33 +105,43 @@ namespace RFPBuilder
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            RFPDocument rfpDocument = new RFPDocument(filePath);
-            foreach (var module in rfpDocument)
-            {
-                foreach (var requirement in module)
-                {
-                    DBHandler.saveRequirementToDb(RFPName, module.ModuleId, requirement);
-                }
-            }
-
-        }
-
-        private void btnUpdate_Click(object sender, EventArgs e)
-        {
-            using (RFPDocument rfpDocument = new RFPDocument(filePath))
+            using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName))
             {
                 foreach (var module in rfpDocument)
                 {
                     foreach (var requirement in module)
                     {
-                        requirement.Comments = "random text";
-                        module.updateRequirement(requirement);
+                        DBHandler.saveRequirementToDb(RFPName, module.ModuleId, requirement);
+                    }
+                }
+            }
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName))
+            {
+                foreach (var module in rfpDocument)
+                {
+                    foreach (var requirement in module)
+                    {
+                        (requirement.Response, requirement.Comments) = DBHandler.getRequirement(requirement.Id);
+
+                        if (requirement.Response != "")
+                        {
+                            module.updateRequirement(requirement);
+                        }
                     }
                 }
                 rfpDocument.update();
             }
             
             File.SetLastWriteTime(filePath, DateTime.Now);
+        }
+
+        private void buttonMinimize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
     }
 }

@@ -1,38 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Data.SqlClient;
 using System.Data;
+using System.Windows.Forms;
 
 namespace RFPBuilder
 {
-    class RFPDocument:IDisposable
+    class RFPDocument : IDisposable
     {
         public string Path { get; }
+        public string RFPName { get; }
         private Excel.Application xlApp;
         private Excel.Workbook xlWorkBook;
 
         public IEnumerator<Module> GetEnumerator()
         {
-            DataTable dt = DBHandler.getPositionMap(System.IO.Path.GetFileNameWithoutExtension(Path));
-            
-            foreach(DataRow dr in dt.Rows)
+       //     DataTable dt = DBHandler.getPositionMap(RFPName);
+            DataTable dt = DBHandler.getPositionMap("test");
+            foreach (DataRow dr in dt.Rows)
             {
+                Excel.Worksheet xlWorkSheet;
+                string reqirement, response, comments, criticality, skipRows;
+                try
+                {
+                    xlWorkSheet = xlWorkBook.Sheets[dr["SheetName"].ToString()];
+                    reqirement = dr["Requirement"].ToString();
+                    response = dr["Response"].ToString();
+                    comments = dr["Comments"].ToString();
+                    criticality = dr["Criticality"].ToString();
+                    skipRows = dr["SkipRows"].ToString();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error occurred during module initialization. \r\n. Message: \r\n " + ex.Message);
+                    throw;
+                }
+
                 yield return new Module("TEST",
-                    xlWorkBook.Sheets[dr["SheetName"].ToString()].UsedRange, 
-                    dr["Requirement"].ToString(),
-                    dr["Response"].ToString(),
-                    dr["Comments"].ToString(),
-                    dr["Criticality"].ToString(),
-                    dr["SkipRows"].ToString());
+                                        xlWorkSheet.UsedRange,
+                                        reqirement,
+                                        response,
+                                        comments,
+                                        criticality,
+                                        skipRows);
             }
         }
 
-        public RFPDocument(string path)
+        public RFPDocument(string path, string rfpname)
         {
+            RFPName = rfpname;
             Path = path;
             xlApp = new Excel.Application();
             xlApp.DisplayAlerts = false;

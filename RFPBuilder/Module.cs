@@ -22,12 +22,23 @@ namespace RFPBuilder
 
                 if (!SkipRows.Contains(row))
                 {
-                    yield return new Requirement(xlRange.Cells[row, Requirement].Value2,
-                                                 xlRange.Cells[row, Response].Value2,
-                                                 xlRange.Cells[row, Comments].Value2,
-                                                 xlRange.Cells[row, Criticality].Value2);
+                    yield return new Requirement((string)xlRange.Cells[row, Requirement].Value2,
+                                                 (string)xlRange.Cells[row, Response].Value2,
+                                                 (string)xlRange.Cells[row, Comments].Value2,
+                                                 (string)xlRange.Cells[row, Criticality].Value2);
                 }
             }
+        }
+
+        public Module(string moduleId, Excel.Range range, string requirement, string response, string comments, string criticality, string skipRows)
+        {
+            ModuleId = moduleId;
+            xlRange = range;
+            Requirement = findColumnIndex(range, requirement);
+            Response = findColumnIndex(range, response);
+            Comments = findColumnIndex(range, comments);
+            Criticality = findColumnIndex(range, criticality);
+            initSkipRows(skipRows);
         }
 
         public void updateRequirement(Requirement requirement)
@@ -36,17 +47,6 @@ namespace RFPBuilder
             xlRange.Cells[row, Response].Value = requirement.Response;
             xlRange.Cells[row, Comments].Value = requirement.Comments;
             xlRange.Cells[row, Criticality].Value = requirement.Criticality;
-        }
-
-        public Module(string moduleId, Excel.Range range, string requirement, string response, string comments, string criticality, string skipRows)
-        {
-            ModuleId = moduleId;
-            xlRange = range;
-            Requirement = findColumnIndex(range,requirement);
-            Response = findColumnIndex(range, response);
-            Comments = findColumnIndex(range, comments);
-            Criticality = findColumnIndex(range, criticality);
-            initSkipRows(skipRows);
         }
 
         private int findColumnIndex(Excel.Range xlRange, string value)

@@ -12,13 +12,13 @@ namespace RFPBuilder
     {
         private static SqlCommandBuilder moduleBuilder, responseBuilder, positionBuilder;
         private static SqlDataAdapter moduleAdapter, responseAdapter, positionAdapter;
-        private const string DB_CONNECTION = "";
+        private const string DB_CONNECTION_MASTER = @"Server=localhost;Integrated security=SSPI;database=master";
+        private const string DB_CONNECTION_RFP = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
         private static SqlConnection connection;
         public static void deleteDB()
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=master";
             string commandSTR = "alter database RequestForProposal set single_user with rollback immediate";
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_MASTER))
             {
                 conn.Open();
                 using (var command = new SqlCommand(commandSTR, conn))
@@ -35,10 +35,8 @@ namespace RFPBuilder
         }
 
         public static bool checkDatabaseExist()
-        {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=master";
-            
-            using (var conn = new SqlConnection(connectionString))
+        {   
+            using (var conn = new SqlConnection(DB_CONNECTION_MASTER))
             {
                 using (var command = new SqlCommand("SELECT db_id('RequestForProposal')", conn))
                 {
@@ -50,12 +48,11 @@ namespace RFPBuilder
 
         public static bool checkModuleMappingExist(string rfpName)
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string sql = "select * " +
                           "from ModuleMap " +
                           "where RFPName = @rfpName";
 
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
             {
                 conn.Open();
 
@@ -73,12 +70,11 @@ namespace RFPBuilder
 
         public static bool checkResponseMappingExist(string rfpName)
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string sql = "select * " +
                           "from ResponseMap " +
                           "where RFPName = @rfpName";
 
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
             {
                 conn.Open();
 
@@ -96,12 +92,11 @@ namespace RFPBuilder
 
         public static bool checkPositionMappingExist(string rfpName)
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string sql = "select * " +
                           "from PositionMap " +
                           "where RFPName = @rfpName";
 
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
             {
                 using (var command = new SqlCommand(sql, conn))
                 {
@@ -117,13 +112,12 @@ namespace RFPBuilder
 
         public static void initModuleMapping(string rfpName)
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string selectModules = "select * " +
                                    "from ModuleLookup";
             string insertModuleMapping = "insert into ModuleMap" +
                                          "(RFPName, ModuleID) " +
                                          "VALUES ";
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
             {
                 conn.Open();
 
@@ -151,13 +145,12 @@ namespace RFPBuilder
         }
         public static void initResponseMapping(string rfpName)
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string selectModules = "select * " +
                                    "from ResponseLookup";
             string insertModuleMapping = "insert into ResponseMap" +
                                          "(RFPName, ResponseMaster) " +
                                          "VALUES ";
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
             {
                 conn.Open();
 
@@ -186,9 +179,8 @@ namespace RFPBuilder
 
         public static void createDB()
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=master";
             string createDB = "CREATE DATABASE RequestForProposal";
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_MASTER))
             {
                 using (var command = new SqlCommand(createDB, conn))
                 {
@@ -209,12 +201,13 @@ namespace RFPBuilder
             string createTable = "use RequestForProposal " + 
                                  "CREATE TABLE MasterRFP ( " +
                                     "RFPName varchar(255) NOT NULL," +
-                                    "ModuleID varchar(255) NOT NULL, " +
-                                    "ReqID varchar(255), " +
-                                    "Criticality varchar(max), " +
-                                    "Response varchar(max), " +
-                                    "Comments varchar(max), " +
-                                    "CONSTRAINT PK_RfpNameReqId PRIMARY KEY(RFPName, ReqId) " +
+                                    "ModuleID varchar(255), " +
+                                    "ReqID varchar(8000) NOT NULL, " +
+                                    "Criticality varchar(255), " +
+                                    "Response varchar(255), " +
+                                    "Comments varchar(1000), " +
+                                    "CONSTRAINT PK_RfpNameReqId PRIMARY KEY(RFPName, ReqId), " +
+                                    "CONSTRAINT FK_ResponseLookupMaster FOREIGN KEY (Response) REFERENCES ResponseLookup(ResponseId) " +
                                  "); ";
             using(var command = new SqlCommand(createTable, connection))
             {
@@ -245,7 +238,8 @@ namespace RFPBuilder
                                     "RFPName varchar(255) NOT NULL," +
                                     "ResponseMaster varchar(255) NOT NULL, " +
                                     "ResponseRFP varchar(255), " +
-                                    "CONSTRAINT PK_RfpNameResponse PRIMARY KEY(RFPName, ResponseMaster) " +
+                                    "CONSTRAINT PK_RfpNameResponse PRIMARY KEY(RFPName, ResponseMaster)," +
+                                    "CONSTRAINT FK_ResponseLookup FOREIGN KEY (ResponseMaster) REFERENCES ResponseLookup(ResponseId) " +
                                  "); ";
             using (var command = new SqlCommand(createTable, connection))
             {
@@ -262,7 +256,7 @@ namespace RFPBuilder
                                     "ModuleId varchar(255) NOT NULL, " +
                                     "Requirement varchar(255), " +
                                     "Response varchar(255), " +
-                                    "Comments varchar(max), " +
+                                    "Comments varchar(1000), " +
                                     "SkipRows varchar(255), " +
                                     "Criticality varchar(255), " +
                                     "CONSTRAINT PK_RfpNameSheetName PRIMARY KEY(RFPName, SheetName, ModuleId) " +
@@ -343,30 +337,13 @@ namespace RFPBuilder
             }
         }
 
-        public static int executeCommand(string sql)
-        {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
-            int ret = 0;
-            using (var conn = new SqlConnection(connectionString))
-            {
-                using (var command = new SqlCommand(sql, conn))
-                {
-                    conn.Open();
-                    ret = command.ExecuteNonQuery();
-                }
-            }
-
-            return ret;
-        }
-
         public static void saveRequirementToDb(string rfpName, string moduleid, Requirement requirement)
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string insert = "insert into MasterRFP " +
                                    "(RFPName, ModuleId, ReqId, Criticality, Response, Comments)" +
                                    " values " +
                                    "(@RFPName, @ModuleId, @ReqId, @Criticality, @Response, @Comments)";
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
             {
                 conn.Open();
                 using (var command = new SqlCommand(insert, conn))
@@ -386,11 +363,10 @@ namespace RFPBuilder
 
         public static void populateModuleCell(System.Windows.Forms.DataGridViewComboBoxCell dgvCB)
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string selectModules = "select *" +
                             "from ModuleLookup";
 
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
             {
                 conn.Open();
 
@@ -411,11 +387,10 @@ namespace RFPBuilder
 
         public static DataTable getPositionMap(string RFPName)
         {
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
             string selectModules = "select *" +
                             "from PositionMap";
             DataTable dt = new DataTable();
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
             {
                 conn.Open();
 
@@ -430,16 +405,23 @@ namespace RFPBuilder
         public static DataSet getMapping(string RFPName)
         {
             DataSet ds = new DataSet();
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
-            string sql = "select * from ModuleMap;";
-            string sql1 = "select * from ResponseMap;";
-            string sql2 = "select * from PositionMap;";
-            connection = new SqlConnection(connectionString);
+            string selectModulesStr = "select * from ModuleMap where RFPName = @RFPName;";
+            string selectResponsesStr = "select * from ResponseMap where RFPName = @RFPName;";
+            string selectPositionStr = "select * from PositionMap where RFPName = @RFPName;";
+            connection = new SqlConnection(DB_CONNECTION_RFP);
             connection.Open();
 
-            moduleAdapter = new SqlDataAdapter(sql, connection);
-            responseAdapter = new SqlDataAdapter(sql1, connection);
-            positionAdapter = new SqlDataAdapter(sql2, connection);
+            SqlCommand selectModules = new SqlCommand(selectModulesStr, connection);
+            SqlCommand selectResponses = new SqlCommand(selectResponsesStr, connection);
+            SqlCommand selectPosition = new SqlCommand(selectPositionStr, connection);
+
+            selectModules.Parameters.AddWithValue("@RFPName", RFPName);
+            selectResponses.Parameters.AddWithValue("@RFPName", RFPName);
+            selectPosition.Parameters.AddWithValue("@RFPName", RFPName);
+
+            moduleAdapter = new SqlDataAdapter(selectModules);
+            responseAdapter = new SqlDataAdapter(selectResponses);
+            positionAdapter = new SqlDataAdapter(selectPosition);
 
             moduleAdapter.Fill(ds, "Module");
             responseAdapter.Fill(ds, "Response");
@@ -460,6 +442,61 @@ namespace RFPBuilder
             moduleAdapter.Update(ds, "Module");
             responseAdapter.Update(ds, "Response");
             positionAdapter.Update(ds, "Position");
+        }
+
+        public static (string response, string comments) getRequirement(string ReqID)
+        {
+            string sql = "select * from MasterRFP where ReqId = @ReqId";
+
+            using (var con = new SqlConnection(DB_CONNECTION_RFP))
+            {
+                con.Open();
+
+                using (var command = new SqlCommand(sql, con)) 
+                {
+                    command.Parameters.AddWithValue("@ReqId", ReqID);
+
+                    var reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+
+                        string response = DBHandler.getCustResponse(reader["RFPName"].ToString(), reader["Response"].ToString());
+
+                        return (response, reader["Comments"].ToString());
+                    }
+                }
+            }
+
+            return ("", "");
+        }
+
+        public static string getCustResponse(string RFPName, string Response)
+        {
+            string sql = "select * from ResponseMap where RFPName = @RFPName and ResponseMaster = @Response";
+
+            using (var con = new SqlConnection(DB_CONNECTION_RFP))
+            {
+                con.Open();
+
+                using (var command = new SqlCommand(sql, con))
+                {
+                    command.Parameters.AddWithValue("@RFPName", RFPName);
+                    command.Parameters.AddWithValue("@Response", Response);
+
+                    var reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+
+                        return reader["ResponseRFP"].ToString();
+                    }
+                }
+            }
+
+            return Response;
         }
     }
 }

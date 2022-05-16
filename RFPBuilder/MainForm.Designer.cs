@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.topPanel = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
+            this.buttonMinimize = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.btnOpen = new System.Windows.Forms.Button();
@@ -49,7 +49,7 @@
             // topPanel
             // 
             this.topPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(233)))));
-            this.topPanel.Controls.Add(this.button2);
+            this.topPanel.Controls.Add(this.buttonMinimize);
             this.topPanel.Controls.Add(this.btnClose);
             this.topPanel.Controls.Add(this.label1);
             this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -59,35 +59,33 @@
             this.topPanel.TabIndex = 0;
             this.topPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topPanel_MouseDown);
             // 
-            // button2
+            // buttonMinimize
             // 
-            this.button2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 28.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(875, 0);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(63, 84);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "-";
-            this.button2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.button2.UseVisualStyleBackColor = true;
+            this.buttonMinimize.FlatAppearance.BorderSize = 0;
+            this.buttonMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonMinimize.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
+            this.buttonMinimize.ForeColor = System.Drawing.Color.White;
+            this.buttonMinimize.Location = new System.Drawing.Point(908, 0);
+            this.buttonMinimize.Name = "buttonMinimize";
+            this.buttonMinimize.Size = new System.Drawing.Size(46, 41);
+            this.buttonMinimize.TabIndex = 2;
+            this.buttonMinimize.Text = "—";
+            this.buttonMinimize.UseVisualStyleBackColor = true;
+            this.buttonMinimize.Click += new System.EventHandler(this.buttonMinimize_Click);
             // 
             // btnClose
             // 
-            this.btnClose.Dock = System.Windows.Forms.DockStyle.Right;
             this.btnClose.FlatAppearance.BorderSize = 0;
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.Location = new System.Drawing.Point(938, 0);
+            this.btnClose.Location = new System.Drawing.Point(960, 0);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(62, 84);
+            this.btnClose.Size = new System.Drawing.Size(40, 41);
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "X";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
             // label1
             // 
@@ -122,7 +120,7 @@
             this.btnMapping.Name = "btnMapping";
             this.btnMapping.Size = new System.Drawing.Size(108, 103);
             this.btnMapping.TabIndex = 2;
-            this.btnMapping.Text = "Map";
+            this.btnMapping.Text = "Mapping";
             this.btnMapping.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnMapping.UseVisualStyleBackColor = true;
             this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
@@ -136,7 +134,7 @@
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(108, 103);
             this.btnSave.TabIndex = 3;
-            this.btnSave.Text = "Save ";
+            this.btnSave.Text = "Save to db";
             this.btnSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -176,7 +174,7 @@
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(108, 103);
             this.btnUpdate.TabIndex = 6;
-            this.btnUpdate.Text = "Update";
+            this.btnUpdate.Text = "Update doc";
             this.btnUpdate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnUpdate.UseVisualStyleBackColor = true;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
@@ -228,7 +226,7 @@
         private System.Windows.Forms.Button btnView;
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonMinimize;
         private System.Windows.Forms.Button btnClose;
     }
 }

@@ -18,9 +18,9 @@ namespace RFPBuilder
 
         public MappingForm(string rfpName)
         {
-            RFPName = rfpName;
             InitializeComponent();
 
+            RFPName = rfpName;
             ds = DBHandler.getMapping(RFPName);
 
             ModulesMapGrid.DataSource = ds;
@@ -37,6 +37,11 @@ namespace RFPBuilder
         {
             DBHandler.updateMapping(ds);
             this.Close();
+        }
+
+        private void buttonMinimize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
     }
 }
