@@ -16,31 +16,30 @@ namespace RFPBuilder
         public string RFPName { get; set; }
         DataSet ds;
 
-        public MappingForm(string rfpName)
-        {
+        public MappingForm(string rfpName) {
             InitializeComponent();
 
             RFPName = rfpName;
-            ds = DBHandler.getMapping(RFPName);
+            string moduleMember, responseMember, positionMember;
+            
+            (ds, moduleMember, responseMember, positionMember) = DBHandler.getMapping(RFPName);
 
             ModulesMapGrid.DataSource = ds;
-            ModulesMapGrid.DataMember = "Module";
+            ModulesMapGrid.DataMember = moduleMember;
 
             ResponsesGrid.DataSource = ds;
-            ResponsesGrid.DataMember = "Response";
+            ResponsesGrid.DataMember = responseMember;
 
             PositionMapGrid.DataSource = ds;
-            PositionMapGrid.DataMember = "Position";
+            PositionMapGrid.DataMember = positionMember;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
-        {
+        private void btnClose_Click(object sender, EventArgs e) {
             DBHandler.updateMapping(ds);
             this.Close();
         }
 
-        private void buttonMinimize_Click(object sender, EventArgs e)
-        {
+        private void buttonMinimize_Click(object sender, EventArgs e) {
             this.WindowState = FormWindowState.Minimized;
         }
     }

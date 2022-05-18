@@ -105,16 +105,7 @@ namespace RFPBuilder
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName))
-            {
-                foreach (var module in rfpDocument)
-                {
-                    foreach (var requirement in module)
-                    {
-                        DBHandler.saveRequirementToDb(RFPName, module.ModuleId, requirement);
-                    }
-                }
-            }
+            DBHandler.saveRequirementsToDb(filePath, RFPName);
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
