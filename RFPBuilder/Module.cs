@@ -13,7 +13,7 @@ namespace RFPBuilder
         HashSet<int> SkipRows;
         int Requirement, Response, Comments, Criticality;
         public string ModuleId;
-        public int row = 0;
+        public int row = 1;
         public IEnumerator<Requirement> GetEnumerator() {
             for (; row < xlRange.Rows.Count; row++) {
                 if (!SkipRows.Contains(row)) {

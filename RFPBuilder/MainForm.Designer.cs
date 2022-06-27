@@ -33,17 +33,16 @@
             this.buttonMinimize = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnOpen = new System.Windows.Forms.Button();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.btnMapping = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnSettings = new System.Windows.Forms.Button();
-            this.btnView = new System.Windows.Forms.Button();
-            this.btnUpdate = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnUpdate = new System.Windows.Forms.Button();
+            this.btnMapping = new System.Windows.Forms.Button();
+            this.btnView = new System.Windows.Forms.Button();
+            this.btnOpen = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.topPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // topPanel
@@ -55,7 +54,7 @@
             this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.topPanel.Location = new System.Drawing.Point(0, 0);
             this.topPanel.Name = "topPanel";
-            this.topPanel.Size = new System.Drawing.Size(1000, 84);
+            this.topPanel.Size = new System.Drawing.Size(1000, 96);
             this.topPanel.TabIndex = 0;
             this.topPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topPanel_MouseDown);
             // 
@@ -97,25 +96,37 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "EllipseSolutions";
             // 
-            // btnOpen
+            // panel2
             // 
-            this.btnOpen.FlatAppearance.BorderSize = 0;
-            this.btnOpen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOpen.Image = global::RFPBuilder.Properties.Resources.share__1_;
-            this.btnOpen.Location = new System.Drawing.Point(17, 19);
-            this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(108, 103);
-            this.btnOpen.TabIndex = 1;
-            this.btnOpen.Text = "Open";
-            this.btnOpen.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnOpen.UseVisualStyleBackColor = true;
-            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
+            this.panel2.Controls.Add(this.btnUpdate);
+            this.panel2.Controls.Add(this.btnMapping);
+            this.panel2.Controls.Add(this.btnView);
+            this.panel2.Controls.Add(this.btnOpen);
+            this.panel2.Controls.Add(this.btnSave);
+            this.panel2.Location = new System.Drawing.Point(253, 154);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(482, 298);
+            this.panel2.TabIndex = 7;
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.FlatAppearance.BorderSize = 0;
+            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUpdate.Image = global::RFPBuilder.Properties.Resources.update;
+            this.btnUpdate.Location = new System.Drawing.Point(273, 146);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(108, 103);
+            this.btnUpdate.TabIndex = 6;
+            this.btnUpdate.Text = "Update doc";
+            this.btnUpdate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
             // btnMapping
             // 
             this.btnMapping.FlatAppearance.BorderSize = 0;
             this.btnMapping.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMapping.Image = global::RFPBuilder.Properties.Resources.share__1_;
+            this.btnMapping.Image = global::RFPBuilder.Properties.Resources.diagram;
             this.btnMapping.Location = new System.Drawing.Point(186, 19);
             this.btnMapping.Name = "btnMapping";
             this.btnMapping.Size = new System.Drawing.Size(108, 103);
@@ -125,38 +136,11 @@
             this.btnMapping.UseVisualStyleBackColor = true;
             this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
             // 
-            // btnSave
-            // 
-            this.btnSave.FlatAppearance.BorderSize = 0;
-            this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSave.Image = global::RFPBuilder.Properties.Resources.share__1_;
-            this.btnSave.Location = new System.Drawing.Point(186, 150);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(108, 103);
-            this.btnSave.TabIndex = 3;
-            this.btnSave.Text = "Save to db";
-            this.btnSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // btnSettings
-            // 
-            this.btnSettings.FlatAppearance.BorderSize = 0;
-            this.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSettings.Image = global::RFPBuilder.Properties.Resources.share__1_;
-            this.btnSettings.Location = new System.Drawing.Point(17, 150);
-            this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(108, 103);
-            this.btnSettings.TabIndex = 4;
-            this.btnSettings.Text = "Settings";
-            this.btnSettings.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnSettings.UseVisualStyleBackColor = true;
-            // 
             // btnView
             // 
             this.btnView.FlatAppearance.BorderSize = 0;
             this.btnView.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnView.Image = global::RFPBuilder.Properties.Resources.share__1_;
+            this.btnView.Image = global::RFPBuilder.Properties.Resources.file;
             this.btnView.Location = new System.Drawing.Point(353, 19);
             this.btnView.Name = "btnView";
             this.btnView.Size = new System.Drawing.Size(108, 103);
@@ -164,33 +148,35 @@
             this.btnView.Text = "View RFP";
             this.btnView.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnView.UseVisualStyleBackColor = true;
+            this.btnView.Click += new System.EventHandler(this.btnView_Click);
             // 
-            // btnUpdate
+            // btnOpen
             // 
-            this.btnUpdate.FlatAppearance.BorderSize = 0;
-            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdate.Image = global::RFPBuilder.Properties.Resources.share__1_;
-            this.btnUpdate.Location = new System.Drawing.Point(353, 150);
-            this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(108, 103);
-            this.btnUpdate.TabIndex = 6;
-            this.btnUpdate.Text = "Update doc";
-            this.btnUpdate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnOpen.FlatAppearance.BorderSize = 0;
+            this.btnOpen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOpen.Image = global::RFPBuilder.Properties.Resources.document;
+            this.btnOpen.Location = new System.Drawing.Point(17, 19);
+            this.btnOpen.Name = "btnOpen";
+            this.btnOpen.Size = new System.Drawing.Size(108, 103);
+            this.btnOpen.TabIndex = 1;
+            this.btnOpen.Text = "Open";
+            this.btnOpen.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnOpen.UseVisualStyleBackColor = true;
+            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
-            // panel2
+            // btnSave
             // 
-            this.panel2.Controls.Add(this.btnUpdate);
-            this.panel2.Controls.Add(this.btnMapping);
-            this.panel2.Controls.Add(this.btnView);
-            this.panel2.Controls.Add(this.btnOpen);
-            this.panel2.Controls.Add(this.btnSettings);
-            this.panel2.Controls.Add(this.btnSave);
-            this.panel2.Location = new System.Drawing.Point(254, 162);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(465, 275);
-            this.panel2.TabIndex = 7;
+            this.btnSave.FlatAppearance.BorderSize = 0;
+            this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSave.Image = global::RFPBuilder.Properties.Resources.database;
+            this.btnSave.Location = new System.Drawing.Point(106, 146);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(108, 103);
+            this.btnSave.TabIndex = 3;
+            this.btnSave.Text = "Save to db";
+            this.btnSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // MainForm
             // 
@@ -208,8 +194,8 @@
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -222,7 +208,6 @@
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.Button btnMapping;
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.Button btnView;
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Panel panel2;

@@ -21,11 +21,11 @@ namespace RFPBuilder
         public MainForm()
         {
             InitializeComponent();
-
-            if (!DBHandler.checkDatabaseExist())
-            {
+            
+            if (!DBHandler.checkDatabaseExist()) {
                 DBHandler.createDB();
             }
+            /*
             else
             {
                 DBHandler.deleteDB();
@@ -36,6 +36,7 @@ namespace RFPBuilder
                                    "(RFPName, SheetName, ModuleId, Requirement, Response, Comments, SkipRows, Criticality)" +
                                    " values " +
                                    "('test', '4. Procurement', 'proc', 'Req #', 'Response', 'Comments', '1-9', 'Criticality')";
+            
             using (var conn = new System.Data.SqlClient.SqlConnection(connectionString))
             {
                 conn.Open();
@@ -44,6 +45,7 @@ namespace RFPBuilder
                     command.ExecuteNonQuery();
                 }
             }
+            */
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -69,12 +71,12 @@ namespace RFPBuilder
 
         private void btnMapping_Click(object sender, EventArgs e)
         {
-            if (!DBHandler.checkModuleMappingExist(RFPName))
+            if (RFPName != "" && !DBHandler.checkModuleMappingExist(RFPName))
             {
                 DBHandler.initModuleMapping(RFPName);
             }
 
-            if (!DBHandler.checkResponseMappingExist(RFPName))
+            if (RFPName != "" && !DBHandler.checkResponseMappingExist(RFPName))
             {
                 DBHandler.initResponseMapping(RFPName);
             }
@@ -116,7 +118,7 @@ namespace RFPBuilder
                 {
                     foreach (var requirement in module)
                     {
-                        (requirement.Response, requirement.Comments) = DBHandler.getRequirement(requirement.Id);
+                        (requirement.Response, requirement.Comments) = DBHandler.getRequirement(requirement.Id, RFPName);
 
                         if (requirement.Response != "")
                         {
@@ -133,6 +135,14 @@ namespace RFPBuilder
         private void buttonMinimize_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void btnView_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            RFPForm rfpForm = new RFPForm(RFPName);
+            rfpForm.ShowDialog();
+            this.Show();
         }
     }
 }

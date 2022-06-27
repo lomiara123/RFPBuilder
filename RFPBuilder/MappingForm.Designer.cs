@@ -108,7 +108,7 @@
             this.Mapping.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Mapping.Location = new System.Drawing.Point(0, 96);
             this.Mapping.Name = "Mapping";
-            this.Mapping.SelectedIndex = 2;
+            this.Mapping.SelectedIndex = 0;
             this.Mapping.Size = new System.Drawing.Size(1000, 544);
             this.Mapping.TabIndex = 0;
             this.Mapping.UseSelectable = true;
@@ -121,7 +121,7 @@
             this.Modules.HorizontalScrollbarSize = 10;
             this.Modules.Location = new System.Drawing.Point(4, 38);
             this.Modules.Name = "Modules";
-            this.Modules.Size = new System.Drawing.Size(1242, 638);
+            this.Modules.Size = new System.Drawing.Size(992, 502);
             this.Modules.TabIndex = 0;
             this.Modules.Text = "Modules";
             this.Modules.VerticalScrollbarBarColor = true;
@@ -140,7 +140,7 @@
             this.ModulesMapGrid.Name = "ModulesMapGrid";
             this.ModulesMapGrid.RowHeadersWidth = 51;
             this.ModulesMapGrid.RowTemplate.Height = 24;
-            this.ModulesMapGrid.Size = new System.Drawing.Size(767, 292);
+            this.ModulesMapGrid.Size = new System.Drawing.Size(981, 491);
             this.ModulesMapGrid.TabIndex = 3;
             // 
             // Responses
@@ -151,7 +151,7 @@
             this.Responses.HorizontalScrollbarSize = 10;
             this.Responses.Location = new System.Drawing.Point(4, 38);
             this.Responses.Name = "Responses";
-            this.Responses.Size = new System.Drawing.Size(1242, 638);
+            this.Responses.Size = new System.Drawing.Size(992, 502);
             this.Responses.TabIndex = 1;
             this.Responses.Text = "Responses";
             this.Responses.VerticalScrollbarBarColor = true;
@@ -170,7 +170,7 @@
             this.ResponsesGrid.Name = "ResponsesGrid";
             this.ResponsesGrid.RowHeadersWidth = 51;
             this.ResponsesGrid.RowTemplate.Height = 24;
-            this.ResponsesGrid.Size = new System.Drawing.Size(767, 292);
+            this.ResponsesGrid.Size = new System.Drawing.Size(981, 491);
             this.ResponsesGrid.TabIndex = 2;
             // 
             // Position

@@ -10,13 +10,14 @@ namespace RFPBuilder
 {
     class DBHandler
     {
-        private static SqlCommandBuilder moduleBuilder, responseBuilder, positionBuilder;
-        private static SqlDataAdapter moduleAdapter, responseAdapter, positionAdapter;
+        private static SqlCommandBuilder moduleBuilder, responseBuilder, positionBuilder, viewRFPBuilder;
+        private static SqlDataAdapter moduleAdapter, responseAdapter, positionAdapter, viewRFPAdapter;
         private const string DB_CONNECTION_MASTER = @"Server=localhost;Integrated security=SSPI;database=master";
         private const string DB_CONNECTION_RFP = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
         private const string moduleMember = "Module";
         private const string responseMember = "Response";
         private const string positionMember = "Position";
+        private const string viewRFPMember = "RFP";
         private static SqlConnection connection;
         public static void deleteDB() {
             string commandSTR = "alter database RequestForProposal set single_user with rollback immediate";
@@ -325,14 +326,15 @@ namespace RFPBuilder
                                         command.Parameters[3].Value = requirement.Criticality != null ? requirement.Criticality : (object)DBNull.Value;
                                         command.Parameters[4].Value = requirement.Response != null ? requirement.Response : (object)DBNull.Value;
                                         command.Parameters[5].Value = requirement.Comments != null ? requirement.Comments : (object)DBNull.Value;
-
+                                        command.ExecuteNonQuery();
+                                            /*
                                         if (command.ExecuteNonQuery() != 1) {
                                             throw new InvalidProgramException();
-                                        }
+                                        }*/
                                     }
                                 }
                                 transaction.Commit();
-                            } catch (Exception) {
+                            } catch (Exception ex) {
                                 transaction.Rollback();
                                 throw;
                             }
@@ -379,10 +381,20 @@ namespace RFPBuilder
 
         public static (DataSet, string, string, string) getMapping(string RFPName) {
             DataSet ds = new DataSet();
-            string selectModulesStr = "select * from ModuleMap where RFPName = @RFPName;";
-            string selectResponsesStr = "select * from ResponseMap where RFPName = @RFPName;";
-            string selectPositionStr = "select * from PositionMap where RFPName = @RFPName;";
-            
+            string selectModulesStr, selectResponsesStr, selectPositionStr;
+
+            if (RFPName != "")
+            {
+                selectModulesStr = "select * from ModuleMap where RFPName = @RFPName;";
+                selectResponsesStr = "select * from ResponseMap where RFPName = @RFPName;";
+                selectPositionStr = "select * from PositionMap where RFPName = @RFPName;";
+            }
+            else {
+                selectModulesStr = "select * from ModuleMap;";
+                selectResponsesStr = "select * from ResponseMap;";
+                selectPositionStr = "select * from PositionMap;";
+            }
+
             connection = new SqlConnection(DB_CONNECTION_RFP);
             connection.Open();
 
@@ -409,6 +421,31 @@ namespace RFPBuilder
             return (ds, moduleMember, responseMember, positionMember);
         }
 
+        public static (DataSet, string) getRFP(string RFPName) {
+            DataSet ds = new DataSet();
+            string selectRFPStr;
+
+            if(RFPName != "") {
+                selectRFPStr = "select * from MasterRFP where RFPName = @RFPName";
+            }
+            else {
+                selectRFPStr = "select * from MasterRFP";
+            }
+
+            connection = new SqlConnection(DB_CONNECTION_RFP);
+            connection.Open();
+
+            SqlCommand selectRFP = new SqlCommand(selectRFPStr, connection);
+            selectRFP.Parameters.AddWithValue("@RFPName", RFPName);
+
+            viewRFPAdapter = new SqlDataAdapter(selectRFP);
+            viewRFPAdapter.Fill(ds, viewRFPMember);
+
+            viewRFPBuilder = new SqlCommandBuilder(viewRFPAdapter);
+
+            return(ds, viewRFPMember);
+        }
+
         public static void updateMapping(DataSet ds) {
             moduleAdapter.UpdateCommand = moduleBuilder.GetUpdateCommand();
             responseAdapter.UpdateCommand = responseBuilder.GetUpdateCommand();
@@ -418,7 +455,12 @@ namespace RFPBuilder
             positionAdapter.Update(ds, positionMember);
         }
 
-        public static (string response, string comments) getRequirement(string ReqID) {
+        public static void updateRFP(DataSet ds) {
+            viewRFPAdapter.UpdateCommand = viewRFPBuilder.GetUpdateCommand();
+            viewRFPAdapter.Update(ds, viewRFPMember);
+        }
+
+        public static (string response, string comments) getRequirement(string ReqID, string RFPName) {
             string sql = "select * from MasterRFP where ReqId = @ReqId";
             using (var con = new SqlConnection(DB_CONNECTION_RFP)) {
                 con.Open();
@@ -428,7 +470,7 @@ namespace RFPBuilder
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows) {
                         reader.Read();
-                        string response = DBHandler.getCustResponse(reader["RFPName"].ToString(), reader["Response"].ToString());
+                        string response = DBHandler.getCustResponse(RFPName, reader["Response"].ToString());
                         return (response, reader["Comments"].ToString());
                     }
                 }

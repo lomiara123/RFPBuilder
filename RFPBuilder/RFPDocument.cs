@@ -14,8 +14,7 @@ namespace RFPBuilder
         private Excel.Workbook xlWorkBook;
 
         public IEnumerator<Module> GetEnumerator() {
-       //     DataTable dt = DBHandler.getPositionMap(RFPName);
-            DataTable dt = DBHandler.getPositionMap("test");
+            DataTable dt = DBHandler.getPositionMap(RFPName);
             if (dt == null || dt.Rows.Count == 0) {
                 MessageBox.Show("Please fill in the Position mapping");
                 yield break;
