@@ -34,11 +34,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Mapping = new MetroFramework.Controls.MetroTabControl();
             this.Modules = new MetroFramework.Controls.MetroTabPage();
-            this.ModulesMapGrid = new System.Windows.Forms.DataGridView();
+            this.ModulesMapGrid = new Zuby.ADGV.AdvancedDataGridView();
             this.Responses = new MetroFramework.Controls.MetroTabPage();
-            this.ResponsesGrid = new System.Windows.Forms.DataGridView();
+            this.ResponsesGrid = new Zuby.ADGV.AdvancedDataGridView();
             this.Position = new MetroFramework.Controls.MetroTabPage();
-            this.PositionMapGrid = new System.Windows.Forms.DataGridView();
+            this.PositionMapGrid = new Zuby.ADGV.AdvancedDataGridView();
             this.panel1.SuspendLayout();
             this.Mapping.SuspendLayout();
             this.Modules.SuspendLayout();
@@ -136,12 +136,18 @@
             this.ModulesMapGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.ModulesMapGrid.BackgroundColor = System.Drawing.Color.White;
             this.ModulesMapGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ModulesMapGrid.FilterAndSortEnabled = true;
+            this.ModulesMapGrid.FilterStringChangedInvokeBeforeDatasourceUpdate = true;
             this.ModulesMapGrid.Location = new System.Drawing.Point(3, 3);
             this.ModulesMapGrid.Name = "ModulesMapGrid";
+            this.ModulesMapGrid.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.ModulesMapGrid.RowHeadersWidth = 51;
             this.ModulesMapGrid.RowTemplate.Height = 24;
             this.ModulesMapGrid.Size = new System.Drawing.Size(981, 491);
-            this.ModulesMapGrid.TabIndex = 3;
+            this.ModulesMapGrid.SortStringChangedInvokeBeforeDatasourceUpdate = true;
+            this.ModulesMapGrid.TabIndex = 2;
+            this.ModulesMapGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.ModulesMapGrid_SortStringChanged);
+            this.ModulesMapGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.ModulesMapGrid_FilterStringChanged);
             // 
             // Responses
             // 
@@ -166,12 +172,18 @@
             this.ResponsesGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.ResponsesGrid.BackgroundColor = System.Drawing.Color.White;
             this.ResponsesGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ResponsesGrid.FilterAndSortEnabled = true;
+            this.ResponsesGrid.FilterStringChangedInvokeBeforeDatasourceUpdate = true;
             this.ResponsesGrid.Location = new System.Drawing.Point(3, 3);
             this.ResponsesGrid.Name = "ResponsesGrid";
+            this.ResponsesGrid.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.ResponsesGrid.RowHeadersWidth = 51;
             this.ResponsesGrid.RowTemplate.Height = 24;
             this.ResponsesGrid.Size = new System.Drawing.Size(981, 491);
+            this.ResponsesGrid.SortStringChangedInvokeBeforeDatasourceUpdate = true;
             this.ResponsesGrid.TabIndex = 2;
+            this.ResponsesGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.ResponsesGrid_SortStringChanged);
+            this.ResponsesGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.ResponsesGrid_FilterStringChanged);
             // 
             // Position
             // 
@@ -197,12 +209,18 @@
             this.PositionMapGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.PositionMapGrid.BackgroundColor = System.Drawing.Color.White;
             this.PositionMapGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.PositionMapGrid.Location = new System.Drawing.Point(3, 3);
+            this.PositionMapGrid.FilterAndSortEnabled = true;
+            this.PositionMapGrid.FilterStringChangedInvokeBeforeDatasourceUpdate = true;
+            this.PositionMapGrid.Location = new System.Drawing.Point(8, 3);
             this.PositionMapGrid.Name = "PositionMapGrid";
+            this.PositionMapGrid.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.PositionMapGrid.RowHeadersWidth = 51;
             this.PositionMapGrid.RowTemplate.Height = 24;
-            this.PositionMapGrid.Size = new System.Drawing.Size(981, 491);
+            this.PositionMapGrid.Size = new System.Drawing.Size(976, 491);
+            this.PositionMapGrid.SortStringChangedInvokeBeforeDatasourceUpdate = true;
             this.PositionMapGrid.TabIndex = 2;
+            this.PositionMapGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.PositionMapGrid_SortStringChanged);
+            this.PositionMapGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.PositionMapGrid_FilterStringChanged);
             // 
             // MappingForm
             // 
@@ -239,8 +257,8 @@
         private MetroFramework.Controls.MetroTabPage Position;
         private System.Windows.Forms.Button buttonMinimize;
         private System.Windows.Forms.Button btnClose;
-        private System.Windows.Forms.DataGridView ModulesMapGrid;
-        private System.Windows.Forms.DataGridView ResponsesGrid;
-        private System.Windows.Forms.DataGridView PositionMapGrid;
+        private Zuby.ADGV.AdvancedDataGridView ModulesMapGrid;
+        private Zuby.ADGV.AdvancedDataGridView ResponsesGrid;
+        private Zuby.ADGV.AdvancedDataGridView PositionMapGrid;
     }
 }

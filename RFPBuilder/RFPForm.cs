@@ -23,9 +23,11 @@ namespace RFPBuilder
             string viewRFPMember;
 
             (ds, viewRFPMember) = DBHandler.getRFP(RFPName);
-
+            /*
             RFPGrid.DataSource = ds;
             RFPGrid.DataMember = viewRFPMember;
+            */
+            RFPGrid.DataSource = ds.Tables[0].DefaultView;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -37,6 +39,16 @@ namespace RFPBuilder
         private void buttonMinimize_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void RFPGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
+        {
+            ds.Tables[0].DefaultView.RowFilter = RFPGrid.FilterString;
+        }
+
+        private void RFPGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
+        {
+            ds.Tables[0].DefaultView.Sort = RFPGrid.SortString;
         }
     }
 }

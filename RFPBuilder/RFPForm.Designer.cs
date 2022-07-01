@@ -33,7 +33,7 @@
             this.buttonMinimize = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.RFPGrid = new System.Windows.Forms.DataGridView();
+            this.RFPGrid = new Zuby.ADGV.AdvancedDataGridView();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RFPGrid)).BeginInit();
@@ -108,12 +108,18 @@
             this.RFPGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.RFPGrid.BackgroundColor = System.Drawing.Color.White;
             this.RFPGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.RFPGrid.FilterAndSortEnabled = true;
+            this.RFPGrid.FilterStringChangedInvokeBeforeDatasourceUpdate = true;
             this.RFPGrid.Location = new System.Drawing.Point(12, 102);
             this.RFPGrid.Name = "RFPGrid";
+            this.RFPGrid.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.RFPGrid.RowHeadersWidth = 51;
             this.RFPGrid.RowTemplate.Height = 24;
             this.RFPGrid.Size = new System.Drawing.Size(976, 526);
+            this.RFPGrid.SortStringChangedInvokeBeforeDatasourceUpdate = true;
             this.RFPGrid.TabIndex = 2;
+            this.RFPGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.RFPGrid_SortStringChanged);
+            this.RFPGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.RFPGrid_FilterStringChanged);
             // 
             // RFPForm
             // 
@@ -141,6 +147,6 @@
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.DataGridView RFPGrid;
+        private Zuby.ADGV.AdvancedDataGridView RFPGrid;
     }
 }

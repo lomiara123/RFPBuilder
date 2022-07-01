@@ -23,7 +23,7 @@ namespace RFPBuilder
             string moduleMember, responseMember, positionMember;
             
             (ds, moduleMember, responseMember, positionMember) = DBHandler.getMapping(RFPName);
-
+            /*
             ModulesMapGrid.DataSource = ds;
             ModulesMapGrid.DataMember = moduleMember;
 
@@ -32,6 +32,10 @@ namespace RFPBuilder
 
             PositionMapGrid.DataSource = ds;
             PositionMapGrid.DataMember = positionMember;
+            */
+            ModulesMapGrid.DataSource = ds.Tables[0].DefaultView;
+            ResponsesGrid.DataSource = ds.Tables[1].DefaultView;
+            PositionMapGrid.DataSource = ds.Tables[2].DefaultView;
         }
 
         private void btnClose_Click(object sender, EventArgs e) {
@@ -41,6 +45,36 @@ namespace RFPBuilder
 
         private void buttonMinimize_Click(object sender, EventArgs e) {
             this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void PositionMapGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
+        {
+            ds.Tables[2].DefaultView.RowFilter = PositionMapGrid.FilterString;
+        }
+
+        private void PositionMapGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
+        {
+            ds.Tables[2].DefaultView.Sort = PositionMapGrid.SortString;
+        }
+
+        private void ResponsesGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
+        {
+            ds.Tables[1].DefaultView.RowFilter = PositionMapGrid.FilterString;
+        }
+
+        private void ResponsesGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
+        {
+            ds.Tables[1].DefaultView.Sort = ResponsesGrid.SortString;
+        }
+
+        private void ModulesMapGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
+        {
+            ds.Tables[0].DefaultView.RowFilter = ModulesMapGrid.FilterString;
+        }
+
+        private void ModulesMapGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
+        {
+            ds.Tables[0].DefaultView.Sort = ModulesMapGrid.SortString;
         }
     }
 }
