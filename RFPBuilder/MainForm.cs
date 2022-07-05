@@ -81,6 +81,11 @@ namespace RFPBuilder
                 DBHandler.initResponseMapping(RFPName);
             }
 
+            if (RFPName != "" && !DBHandler.checkPositionMappingExist(RFPName))
+            {
+                DBHandler.initPositionMapping(RFPName, filePath);
+            }
+
             this.Hide();
             MappingForm mappingForm = new MappingForm(RFPName);
             mappingForm.ShowDialog();

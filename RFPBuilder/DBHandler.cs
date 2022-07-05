@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace RFPBuilder
 {
@@ -85,6 +86,7 @@ namespace RFPBuilder
                           "where RFPName = @rfpName";
 
             using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
+                conn.Open();
                 using (var command = new SqlCommand(sql, conn)) {
                     command.Parameters.AddWithValue("@rfpName", rfpName);
 
@@ -150,6 +152,36 @@ namespace RFPBuilder
                     command.ExecuteNonQuery();
                 }
             }
+        }
+
+        public static void initPositionMapping(string rfpName, string pathToRFP)
+        {
+            string insertPositionMapping = "insert into PositionMap" +
+                                            "(RFPName, SheetName, ModuleId) " +
+                                            "values ";
+            
+            Excel.Application xlApp = new Excel.Application();
+            Excel.Workbook xlWorkBook = xlApp.Workbooks.Open(pathToRFP);
+
+            foreach(Excel.Worksheet xlWorkSheet in xlWorkBook.Worksheets)
+            {
+                insertPositionMapping += "('" + rfpName + "', '" + xlWorkSheet.Name + "', ''),";    
+            }
+            if (pathToRFP != "")
+            {
+                insertPositionMapping = insertPositionMapping.Remove(insertPositionMapping.Length - 1);
+
+                using (var conn = new SqlConnection(DB_CONNECTION_RFP))
+                {
+                    conn.Open();
+
+                    using (var command = new SqlCommand(insertPositionMapping, conn))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            
         }
 
         public static void createDB() {
