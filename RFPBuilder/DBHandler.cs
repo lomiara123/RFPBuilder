@@ -386,12 +386,12 @@ namespace RFPBuilder
             if (RFPName != "")
             {
                 selectModulesStr = "select * from ModuleMap where RFPName = @RFPName;";
-                selectResponsesStr = "select * from ResponseMap where RFPName = @RFPName;";
+                selectResponsesStr = "select RFPName as [RFP name], ResponseMaster as [Customer response indicator], ResponseRFP as [Master response indicator] from ResponseMap where RFPName = @RFPName;";
                 selectPositionStr = "select * from PositionMap where RFPName = @RFPName;";
             }
             else {
                 selectModulesStr = "select * from ModuleMap;";
-                selectResponsesStr = "select * from ResponseMap;";
+                selectResponsesStr = "select RFPName as [RFP name], ResponseMaster as [Customer response indicator], ResponseRFP as [Master response indicator] from ResponseMap;";
                 selectPositionStr = "select * from PositionMap;";
             }
 
