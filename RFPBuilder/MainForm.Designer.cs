@@ -129,7 +129,7 @@
             this.btnMapping.Image = global::RFPBuilder.Properties.Resources.diagram;
             this.btnMapping.Location = new System.Drawing.Point(186, 19);
             this.btnMapping.Name = "btnMapping";
-            this.btnMapping.Size = new System.Drawing.Size(108, 103);
+            this.btnMapping.Size = new System.Drawing.Size(108, 121);
             this.btnMapping.TabIndex = 2;
             this.btnMapping.Text = "Mapping";
             this.btnMapping.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
@@ -143,9 +143,9 @@
             this.btnView.Image = global::RFPBuilder.Properties.Resources.file;
             this.btnView.Location = new System.Drawing.Point(353, 19);
             this.btnView.Name = "btnView";
-            this.btnView.Size = new System.Drawing.Size(108, 103);
+            this.btnView.Size = new System.Drawing.Size(108, 121);
             this.btnView.TabIndex = 5;
-            this.btnView.Text = "View RFP";
+            this.btnView.Text = "View master RFP";
             this.btnView.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnView.UseVisualStyleBackColor = true;
             this.btnView.Click += new System.EventHandler(this.btnView_Click);
@@ -157,9 +157,9 @@
             this.btnOpen.Image = global::RFPBuilder.Properties.Resources.document;
             this.btnOpen.Location = new System.Drawing.Point(17, 19);
             this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(108, 103);
+            this.btnOpen.Size = new System.Drawing.Size(108, 121);
             this.btnOpen.TabIndex = 1;
-            this.btnOpen.Text = "Open";
+            this.btnOpen.Text = "File path";
             this.btnOpen.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
