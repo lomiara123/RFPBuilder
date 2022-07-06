@@ -36,6 +36,7 @@
             this.Modules = new MetroFramework.Controls.MetroTabPage();
             this.ModulesMapGrid = new Zuby.ADGV.AdvancedDataGridView();
             this.Responses = new MetroFramework.Controls.MetroTabPage();
+            this.responseDescriptionTextBox = new System.Windows.Forms.TextBox();
             this.ResponsesGrid = new Zuby.ADGV.AdvancedDataGridView();
             this.Position = new MetroFramework.Controls.MetroTabPage();
             this.PositionMapGrid = new Zuby.ADGV.AdvancedDataGridView();
@@ -58,7 +59,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1000, 96);
+            this.panel1.Size = new System.Drawing.Size(1000, 120);
             this.panel1.TabIndex = 0;
             // 
             // buttonMinimize
@@ -106,10 +107,10 @@
             this.Mapping.Controls.Add(this.Responses);
             this.Mapping.Controls.Add(this.Position);
             this.Mapping.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Mapping.Location = new System.Drawing.Point(0, 96);
+            this.Mapping.Location = new System.Drawing.Point(0, 120);
             this.Mapping.Name = "Mapping";
-            this.Mapping.SelectedIndex = 0;
-            this.Mapping.Size = new System.Drawing.Size(1000, 544);
+            this.Mapping.SelectedIndex = 1;
+            this.Mapping.Size = new System.Drawing.Size(1000, 520);
             this.Mapping.TabIndex = 0;
             this.Mapping.UseSelectable = true;
             // 
@@ -121,7 +122,7 @@
             this.Modules.HorizontalScrollbarSize = 10;
             this.Modules.Location = new System.Drawing.Point(4, 38);
             this.Modules.Name = "Modules";
-            this.Modules.Size = new System.Drawing.Size(992, 502);
+            this.Modules.Size = new System.Drawing.Size(992, 478);
             this.Modules.TabIndex = 0;
             this.Modules.Text = "Modules";
             this.Modules.VerticalScrollbarBarColor = true;
@@ -143,7 +144,7 @@
             this.ModulesMapGrid.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.ModulesMapGrid.RowHeadersWidth = 51;
             this.ModulesMapGrid.RowTemplate.Height = 24;
-            this.ModulesMapGrid.Size = new System.Drawing.Size(981, 491);
+            this.ModulesMapGrid.Size = new System.Drawing.Size(981, 467);
             this.ModulesMapGrid.SortStringChangedInvokeBeforeDatasourceUpdate = true;
             this.ModulesMapGrid.TabIndex = 2;
             this.ModulesMapGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.ModulesMapGrid_SortStringChanged);
@@ -151,18 +152,32 @@
             // 
             // Responses
             // 
+            this.Responses.Controls.Add(this.responseDescriptionTextBox);
             this.Responses.Controls.Add(this.ResponsesGrid);
             this.Responses.HorizontalScrollbarBarColor = true;
             this.Responses.HorizontalScrollbarHighlightOnWheel = false;
             this.Responses.HorizontalScrollbarSize = 10;
             this.Responses.Location = new System.Drawing.Point(4, 38);
             this.Responses.Name = "Responses";
-            this.Responses.Size = new System.Drawing.Size(992, 502);
+            this.Responses.Size = new System.Drawing.Size(992, 478);
             this.Responses.TabIndex = 1;
             this.Responses.Text = "Responses";
             this.Responses.VerticalScrollbarBarColor = true;
             this.Responses.VerticalScrollbarHighlightOnWheel = false;
             this.Responses.VerticalScrollbarSize = 10;
+            // 
+            // responseDescriptionTextBox
+            // 
+            this.responseDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.responseDescriptionTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.responseDescriptionTextBox.Location = new System.Drawing.Point(3, 416);
+            this.responseDescriptionTextBox.Multiline = true;
+            this.responseDescriptionTextBox.Name = "responseDescriptionTextBox";
+            this.responseDescriptionTextBox.ReadOnly = true;
+            this.responseDescriptionTextBox.Size = new System.Drawing.Size(981, 44);
+            this.responseDescriptionTextBox.TabIndex = 3;
             // 
             // ResponsesGrid
             // 
@@ -179,11 +194,12 @@
             this.ResponsesGrid.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.ResponsesGrid.RowHeadersWidth = 51;
             this.ResponsesGrid.RowTemplate.Height = 24;
-            this.ResponsesGrid.Size = new System.Drawing.Size(981, 491);
+            this.ResponsesGrid.Size = new System.Drawing.Size(981, 398);
             this.ResponsesGrid.SortStringChangedInvokeBeforeDatasourceUpdate = true;
             this.ResponsesGrid.TabIndex = 2;
             this.ResponsesGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.ResponsesGrid_SortStringChanged);
             this.ResponsesGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.ResponsesGrid_FilterStringChanged);
+            this.ResponsesGrid.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResponsesGrid_RowEnter);
             // 
             // Position
             // 
@@ -193,7 +209,7 @@
             this.Position.HorizontalScrollbarSize = 10;
             this.Position.Location = new System.Drawing.Point(4, 38);
             this.Position.Name = "Position";
-            this.Position.Size = new System.Drawing.Size(992, 502);
+            this.Position.Size = new System.Drawing.Size(992, 478);
             this.Position.Style = MetroFramework.MetroColorStyle.Green;
             this.Position.TabIndex = 2;
             this.Position.Text = "Position";
@@ -216,7 +232,7 @@
             this.PositionMapGrid.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.PositionMapGrid.RowHeadersWidth = 51;
             this.PositionMapGrid.RowTemplate.Height = 24;
-            this.PositionMapGrid.Size = new System.Drawing.Size(976, 491);
+            this.PositionMapGrid.Size = new System.Drawing.Size(976, 467);
             this.PositionMapGrid.SortStringChangedInvokeBeforeDatasourceUpdate = true;
             this.PositionMapGrid.TabIndex = 2;
             this.PositionMapGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.PositionMapGrid_SortStringChanged);
@@ -240,6 +256,7 @@
             this.Modules.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ModulesMapGrid)).EndInit();
             this.Responses.ResumeLayout(false);
+            this.Responses.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ResponsesGrid)).EndInit();
             this.Position.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.PositionMapGrid)).EndInit();
@@ -260,5 +277,6 @@
         private Zuby.ADGV.AdvancedDataGridView ModulesMapGrid;
         private Zuby.ADGV.AdvancedDataGridView ResponsesGrid;
         private Zuby.ADGV.AdvancedDataGridView PositionMapGrid;
+        private System.Windows.Forms.TextBox responseDescriptionTextBox;
     }
 }

@@ -76,5 +76,20 @@ namespace RFPBuilder
         {
             ds.Tables[0].DefaultView.Sort = ModulesMapGrid.SortString;
         }
+
+        private void ResponsesGrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            Int32 selectedCellCount = ResponsesGrid.GetCellCount(DataGridViewElementStates.Selected);
+
+            if (selectedCellCount > 0)
+            {
+                int selectedRow = ResponsesGrid.SelectedCells[0].RowIndex;
+                if (ResponsesGrid.Rows[selectedRow].Cells["Master response indicator"].Value != null)
+                {
+                    string response = ResponsesGrid.Rows[selectedRow].Cells["Master response indicator"].Value.ToString();
+                    responseDescriptionTextBox.Text = DBHandler.getResponseDescription(response);
+                }
+            }
+        }
     }
 }

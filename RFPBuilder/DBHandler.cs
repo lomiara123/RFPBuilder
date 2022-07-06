@@ -418,12 +418,12 @@ namespace RFPBuilder
             if (RFPName != "")
             {
                 selectModulesStr = "select * from ModuleMap where RFPName = @RFPName;";
-                selectResponsesStr = "select RFPName as [RFP name], ResponseMaster as [Customer response indicator], ResponseRFP as [Master response indicator] from ResponseMap where RFPName = @RFPName;";
+                selectResponsesStr = "select RFPName as [RFP name], ResponseMaster as [Master response indicator], ResponseRFP as [Customer response indicator] from ResponseMap where RFPName = @RFPName;";
                 selectPositionStr = "select * from PositionMap where RFPName = @RFPName;";
             }
             else {
                 selectModulesStr = "select * from ModuleMap;";
-                selectResponsesStr = "select RFPName as [RFP name], ResponseMaster as [Customer response indicator], ResponseRFP as [Master response indicator] from ResponseMap;";
+                selectResponsesStr = "select RFPName as [RFP name], ResponseMaster as [Master response indicator], ResponseRFP as [Customer response indicator] from ResponseMap;";
                 selectPositionStr = "select * from PositionMap;";
             }
 
@@ -529,6 +529,29 @@ namespace RFPBuilder
             }
 
             return Response;
+        }
+
+        public static string getResponseDescription(string responseId)
+        {
+            string sql = "select * from ResponseLookup where ResponseId = @ResponseId";
+            string description = "";
+            using (var con = new SqlConnection(DB_CONNECTION_RFP))
+            {
+                con.Open();
+                using (var command = new SqlCommand(sql, con))
+                {
+                    command.Parameters.AddWithValue("@ResponseId", responseId);
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+                        description = reader["Description"].ToString();
+                    }
+                }
+            }
+
+            return description;
         }
     }
 }
