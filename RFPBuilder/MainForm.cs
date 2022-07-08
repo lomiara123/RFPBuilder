@@ -88,7 +88,12 @@ namespace RFPBuilder
 
             this.Hide();
             MappingForm mappingForm = new MappingForm(RFPName);
+            mappingForm.Left = this.Left;
+            mappingForm.Top = this.Top;
             mappingForm.ShowDialog();
+            this.StartPosition = FormStartPosition.Manual;
+            this.Left = mappingForm.Left;
+            this.Top = mappingForm.Top;
             this.Show();
         }
 
@@ -146,7 +151,12 @@ namespace RFPBuilder
         {
             this.Hide();
             RFPForm rfpForm = new RFPForm(RFPName);
+            rfpForm.Left = this.Left;
+            rfpForm.Top = this.Top;
             rfpForm.ShowDialog();
+            this.StartPosition = FormStartPosition.Manual;
+            this.Left = rfpForm.Left;
+            this.Top = rfpForm.Top;
             this.Show();
         }
     }
