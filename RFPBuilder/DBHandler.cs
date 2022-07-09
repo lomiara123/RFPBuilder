@@ -553,5 +553,22 @@ namespace RFPBuilder
 
             return description;
         }
+
+        public static bool checkMasterResponse(string responseId)
+        {
+            string sql = "select * from ResponseLookup where ResponseId = @ResponseId";
+            using (var con = new SqlConnection(DB_CONNECTION_RFP))
+            {
+                con.Open();
+                using (var command = new SqlCommand(sql, con))
+                {
+                    command.Parameters.AddWithValue("@ResponseId", responseId);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    return reader.HasRows;
+                }
+            }
+        }
     }
 }

@@ -200,6 +200,7 @@
             this.ResponsesGrid.TabIndex = 2;
             this.ResponsesGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.ResponsesGrid_SortStringChanged);
             this.ResponsesGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.ResponsesGrid_FilterStringChanged);
+            this.ResponsesGrid.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.ResponsesGrid_CellValidating);
             this.ResponsesGrid.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResponsesGrid_RowEnter);
             // 
             // Position

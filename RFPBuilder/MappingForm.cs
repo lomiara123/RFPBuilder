@@ -110,5 +110,29 @@ namespace RFPBuilder
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
+
+        private void ResponsesGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            string headerText = ResponsesGrid.Columns[e.ColumnIndex].HeaderText;
+
+            if (headerText.Equals("Master response indicator") && 
+                !DBHandler.checkMasterResponse(e.FormattedValue.ToString()))
+            {
+                ResponsesGrid.Rows[e.RowIndex].ErrorText = "Master response is incorrect";
+                e.Cancel = true;
+            }
+
+            if (headerText.Equals("RFP name") && 
+                string.IsNullOrEmpty(e.FormattedValue.ToString()))
+            {
+                ResponsesGrid.Rows[e.RowIndex].ErrorText = "RFP name must not be empty";
+                e.Cancel= true;
+            }
+
+            if(!e.Cancel)
+            {
+                ResponsesGrid.Rows[e.RowIndex].ErrorText = "";
+            }
+        }
     }
 }
