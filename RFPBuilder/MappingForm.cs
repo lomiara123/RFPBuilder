@@ -86,7 +86,11 @@ namespace RFPBuilder
         {
             ds.Tables[0].DefaultView.Sort = ModulesMapGrid.SortString;
         }
-
+        /// <summary>
+        ///     Set response description text
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ResponsesGrid_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             Int32 selectedCellCount = ResponsesGrid.GetCellCount(DataGridViewElementStates.Selected);
@@ -115,8 +119,13 @@ namespace RFPBuilder
         {
             string headerText = ResponsesGrid.Columns[e.ColumnIndex].HeaderText;
 
+            if (ResponsesGrid.Rows[e.RowIndex].IsNewRow)
+            {
+                return;
+            }
+
             if (headerText.Equals("Master response indicator") && 
-                !DBHandler.checkMasterResponse(e.FormattedValue.ToString()))
+                !DBHandler.checkResponseExists(e.FormattedValue.ToString()))
             {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "Master response is incorrect";
                 e.Cancel = true;
@@ -129,7 +138,40 @@ namespace RFPBuilder
                 e.Cancel= true;
             }
 
-            if(!e.Cancel)
+            if (!e.Cancel)
+            {
+                ResponsesGrid.Rows[e.RowIndex].ErrorText = "";
+            }
+        }
+
+        private bool checkDuplicateResponse(int currentRow)
+        {
+            string rfpName = ResponsesGrid.Rows[currentRow].Cells["RFP name"].Value.ToString();
+            string masterResponse = ResponsesGrid.Rows[currentRow].Cells["Master response indicator"].Value.ToString();
+
+            for (int rowToCompare = 0; rowToCompare < ResponsesGrid.Rows.Count - 1; rowToCompare ++)
+            {
+                string rfpNameToCompare = ResponsesGrid.Rows[rowToCompare].Cells["RFP name"].Value.ToString();
+                string masterResponseToCompare = ResponsesGrid.Rows[rowToCompare].Cells["Master response indicator"].Value.ToString();
+                
+                if (currentRow != rowToCompare && rfpName == rfpNameToCompare && masterResponse == masterResponseToCompare)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void ResponsesGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            if (this.checkDuplicateResponse(e.RowIndex))
+            {
+                ResponsesGrid.Rows[e.RowIndex].ErrorText = "Multiple mapping for one response is not allowed";
+                e.Cancel = true;
+            }
+
+            if (!e.Cancel)
             {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "";
             }

@@ -202,6 +202,7 @@
             this.ResponsesGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.ResponsesGrid_FilterStringChanged);
             this.ResponsesGrid.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.ResponsesGrid_CellValidating);
             this.ResponsesGrid.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResponsesGrid_RowEnter);
+            this.ResponsesGrid.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.ResponsesGrid_RowValidating);
             // 
             // Position
             // 
