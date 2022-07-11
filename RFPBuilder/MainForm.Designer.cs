@@ -28,28 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.topPanel = new System.Windows.Forms.Panel();
             this.buttonMinimize = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.mainPanel = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnMapping = new System.Windows.Forms.Button();
             this.btnView = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.buttonsPanel = new System.Windows.Forms.Panel();
             this.topPanel.SuspendLayout();
-            this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.mainPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.buttonsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // topPanel
             // 
             this.topPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(233)))));
-            this.topPanel.Controls.Add(this.buttonMinimize);
-            this.topPanel.Controls.Add(this.btnClose);
+            this.topPanel.Controls.Add(this.buttonsPanel);
             this.topPanel.Controls.Add(this.label1);
             this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.topPanel.Location = new System.Drawing.Point(0, 0);
@@ -64,7 +64,7 @@
             this.buttonMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonMinimize.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
             this.buttonMinimize.ForeColor = System.Drawing.Color.White;
-            this.buttonMinimize.Location = new System.Drawing.Point(908, 0);
+            this.buttonMinimize.Location = new System.Drawing.Point(76, 0);
             this.buttonMinimize.Name = "buttonMinimize";
             this.buttonMinimize.Size = new System.Drawing.Size(46, 41);
             this.buttonMinimize.TabIndex = 2;
@@ -78,7 +78,7 @@
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.Location = new System.Drawing.Point(960, 0);
+            this.btnClose.Location = new System.Drawing.Point(128, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(40, 41);
             this.btnClose.TabIndex = 1;
@@ -96,17 +96,27 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "EllipseSolutions";
             // 
-            // panel2
+            // mainPanel
             // 
-            this.panel2.Controls.Add(this.btnUpdate);
-            this.panel2.Controls.Add(this.btnMapping);
-            this.panel2.Controls.Add(this.btnView);
-            this.panel2.Controls.Add(this.btnOpen);
-            this.panel2.Controls.Add(this.btnSave);
-            this.panel2.Location = new System.Drawing.Point(253, 154);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(482, 298);
-            this.panel2.TabIndex = 7;
+            this.mainPanel.Controls.Add(this.btnUpdate);
+            this.mainPanel.Controls.Add(this.btnMapping);
+            this.mainPanel.Controls.Add(this.btnView);
+            this.mainPanel.Controls.Add(this.btnOpen);
+            this.mainPanel.Controls.Add(this.btnSave);
+            this.mainPanel.Location = new System.Drawing.Point(269, 196);
+            this.mainPanel.Name = "mainPanel";
+            this.mainPanel.Size = new System.Drawing.Size(482, 298);
+            this.mainPanel.TabIndex = 7;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox1.Image = global::RFPBuilder.Properties.Resources.output_onlinegiftools;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 557);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(121, 84);
+            this.pictureBox1.TabIndex = 8;
+            this.pictureBox1.TabStop = false;
             // 
             // btnUpdate
             // 
@@ -178,6 +188,15 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // buttonsPanel
+            // 
+            this.buttonsPanel.Controls.Add(this.buttonMinimize);
+            this.buttonsPanel.Controls.Add(this.btnClose);
+            this.buttonsPanel.Location = new System.Drawing.Point(829, 3);
+            this.buttonsPanel.Name = "buttonsPanel";
+            this.buttonsPanel.Size = new System.Drawing.Size(168, 82);
+            this.buttonsPanel.TabIndex = 9;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -185,17 +204,18 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1000, 640);
             this.ControlBox = false;
-            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.topPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.mainPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.buttonsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -204,15 +224,16 @@
 
         private System.Windows.Forms.Panel topPanel;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.Button btnMapping;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnView;
         private System.Windows.Forms.Button btnUpdate;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel mainPanel;
         private System.Windows.Forms.Button buttonMinimize;
         private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel buttonsPanel;
     }
 }
 

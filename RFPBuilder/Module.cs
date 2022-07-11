@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace RFPBuilder
@@ -15,12 +16,22 @@ namespace RFPBuilder
         public string ModuleId;
         public int row = 1;
         public IEnumerator<Requirement> GetEnumerator() {
+            if (Requirement == 0 || Response == 0)
+            {
+                yield break;
+            }
+
             for (; row < xlRange.Rows.Count; row++) {
                 if (!SkipRows.Contains(row)) {
-                    yield return new Requirement((string)xlRange.Cells[row, Requirement].Value2,
-                                                 (string)xlRange.Cells[row, Response].Value2,
-                                                 (string)xlRange.Cells[row, Comments].Value2,
-                                                 (string)xlRange.Cells[row, Criticality].Value2);
+                    string requirement = (string)xlRange.Cells[row, Requirement].Value2;
+                    string response = (string)xlRange.Cells[row, Response].Value2;
+                    string comments = Comments != 0 ? (string)xlRange.Cells[row, Comments].Value2 : "";
+                    string criticality = Criticality != 0 ? (string)xlRange.Cells[row, Criticality].Value2 : "";
+
+                    yield return new Requirement(requirement,
+                                                 response,
+                                                 comments,
+                                                 criticality);
                 }
             }
         }
@@ -45,7 +56,7 @@ namespace RFPBuilder
         private int findColumnIndex(Excel.Range xlRange, string value) {
             for (int i = 1; i <= xlRange.Rows.Count; i++) {
                 for (int j = 1; j <= xlRange.Columns.Count; j++) {
-                    if (xlRange.Cells[i, j].Value == value) {
+                    if (Convert.ToString(xlRange.Cells[i, j].Value) == value) {
                         return j;
                     }
                 }
@@ -54,6 +65,10 @@ namespace RFPBuilder
         }
         //expected input: "1,2,4-10,13,15"
         private void initSkipRows(string skipRowsStr) {
+            if (skipRowsStr == null || skipRowsStr == "")
+            {
+                return;
+            }
             SkipRows = new HashSet<int>();
             var rows = skipRowsStr.Split('\u002C'); //comma ,
             foreach (var row in rows) {

@@ -33,7 +33,7 @@ namespace RFPBuilder
                     }
                     string propetyName = config.Split('=')[0];
                     string propertyValue = config.Split('=')[1];
-                    if(propetyName.ToUpper().Equals("SERVERNAME"))
+                    if (propetyName.ToUpper().Equals("SERVERNAME"))
                     {
                         return String.Format(@"Server={0};Integrated security=SSPI;database=master", propertyValue);
                     }
@@ -49,7 +49,7 @@ namespace RFPBuilder
                 string[] configurations = File.ReadAllLines(path);
                 foreach (string config in configurations)
                 {
-                    if(config.Split('=').Length == 1)
+                    if (config.Split('=').Length == 1)
                     {
                         continue;
                     }
@@ -253,8 +253,7 @@ namespace RFPBuilder
                                     "Criticality varchar(255), " +
                                     "Response varchar(255), " +
                                     "Comments varchar(1000), " +
-                                    "CONSTRAINT PK_RfpNameReqId PRIMARY KEY(RFPName, ReqId), " +
-                                    "CONSTRAINT FK_ResponseLookupMaster FOREIGN KEY (Response) REFERENCES ResponseLookup(ResponseId) " +
+                                    "CONSTRAINT PK_RfpNameReqId PRIMARY KEY(RFPName, ReqId)" +
                                  "); ";
             using(var command = new SqlCommand(createTable, connection)) {
                 command.ExecuteNonQuery();
@@ -379,7 +378,8 @@ namespace RFPBuilder
                                 "(RFPName, ModuleId, ReqId, Criticality, Response, Comments)" +
                                 " values(@RFPName, @ModuleId, @ReqId, @Criticality, @Response, @Comments) " +
                             "end";
-            
+            if (filePath == null || filePath == "")
+                return;
             using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
                 conn.Open();
                 using (var transaction = conn.BeginTransaction()) {

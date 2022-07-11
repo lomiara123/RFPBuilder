@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace RFPBuilder
 {
@@ -9,7 +9,7 @@ namespace RFPBuilder
     {
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
-
+        private delegate void SafeCallDelegate();
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -21,31 +21,12 @@ namespace RFPBuilder
         public MainForm()
         {
             InitializeComponent();
-            
+
+            pictureBox1.Visible = false;
+
             if (!DBHandler.checkDatabaseExist()) {
                 DBHandler.createDB();
             }
-            /*
-            else
-            {
-                DBHandler.deleteDB();
-                DBHandler.createDB();
-            }
-            string connectionString = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
-            string insert = "insert into PositionMap " +
-                                   "(RFPName, SheetName, ModuleId, Requirement, Response, Comments, SkipRows, Criticality)" +
-                                   " values " +
-                                   "('test', '4. Procurement', 'proc', 'Req #', 'Response', 'Comments', '1-9', 'Criticality')";
-            
-            using (var conn = new System.Data.SqlClient.SqlConnection(connectionString))
-            {
-                conn.Open();
-                using (var command = new System.Data.SqlClient.SqlCommand(insert, conn))
-                {
-                    command.ExecuteNonQuery();
-                }
-            }
-            */
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -71,11 +52,6 @@ namespace RFPBuilder
 
         private void btnMapping_Click(object sender, EventArgs e)
         {
-            if (RFPName != "" && !DBHandler.checkModuleMappingExist(RFPName))
-            {
-                DBHandler.initModuleMapping(RFPName);
-            }
-
             if (RFPName != "" && !DBHandler.checkResponseMappingExist(RFPName))
             {
                 DBHandler.initResponseMapping(RFPName);
@@ -99,11 +75,7 @@ namespace RFPBuilder
 
         private void MainForm_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
+
         }
 
         private void topPanel_MouseDown(object sender, MouseEventArgs e)
@@ -115,9 +87,15 @@ namespace RFPBuilder
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
-            DBHandler.saveRequirementsToDb(filePath, RFPName);
+            mainPanel.Enabled = false;
+            buttonsPanel.Enabled = false;
+            pictureBox1.Visible = true;
+            await Task.Factory.StartNew(() => DBHandler.saveRequirementsToDb(filePath, RFPName), TaskCreationOptions.LongRunning);
+            pictureBox1.Visible = false;
+            mainPanel.Enabled = true;
+            buttonsPanel.Enabled = true;
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
