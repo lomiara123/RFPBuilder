@@ -31,16 +31,7 @@ namespace RFPBuilder
             string moduleMember, responseMember, positionMember;
             
             (ds, moduleMember, responseMember, positionMember) = DBHandler.getMapping(RFPName);
-            /*
-            ModulesMapGrid.DataSource = ds;
-            ModulesMapGrid.DataMember = moduleMember;
 
-            ResponsesGrid.DataSource = ds;
-            ResponsesGrid.DataMember = responseMember;
-
-            PositionMapGrid.DataSource = ds;
-            PositionMapGrid.DataMember = positionMember;
-            */
             ModulesMapGrid.DataSource = ds.Tables[0].DefaultView;
             ResponsesGrid.DataSource = ds.Tables[1].DefaultView;
             PositionMapGrid.DataSource = ds.Tables[2].DefaultView;

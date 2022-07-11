@@ -30,10 +30,6 @@ namespace RFPBuilder
             string viewRFPMember;
 
             (ds, viewRFPMember) = DBHandler.getRFP(RFPName);
-            /*
-            RFPGrid.DataSource = ds;
-            RFPGrid.DataMember = viewRFPMember;
-            */
             RFPGrid.DataSource = ds.Tables[0].DefaultView;
         }
 

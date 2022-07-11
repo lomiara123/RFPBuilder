@@ -18,10 +18,10 @@ namespace RFPBuilder
         private const string positionMember = "Position";
         private const string viewRFPMember = "RFP";
         private static SqlConnection connection;
-
+        private const string configFilename = "RFPBuilder.config";
         private static string initMasterConnectionString()
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "\\RFPBuilder.config");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), configFilename);
             if (File.Exists(path))
             {
                 string[] configurations = File.ReadAllLines(path);
@@ -43,7 +43,7 @@ namespace RFPBuilder
         }
         private static string initDatabaseConnectionString()
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "\\RFPBuilder.config");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), configFilename);
             if (File.Exists(path))
             {
                 string[] configurations = File.ReadAllLines(path);
