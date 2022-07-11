@@ -92,13 +92,28 @@ namespace RFPBuilder
             mainPanel.Enabled = false;
             buttonsPanel.Enabled = false;
             pictureBox1.Visible = true;
+
             await Task.Factory.StartNew(() => DBHandler.saveRequirementsToDb(filePath, RFPName), TaskCreationOptions.LongRunning);
+
             pictureBox1.Visible = false;
             mainPanel.Enabled = true;
             buttonsPanel.Enabled = true;
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        private async void btnUpdate_Click(object sender, EventArgs e)
+        {
+            mainPanel.Enabled = false;
+            buttonsPanel.Enabled = false;
+            pictureBox1.Visible = true;
+
+            await Task.Factory.StartNew(() => updateRfpDocument(), TaskCreationOptions.LongRunning);
+            
+            pictureBox1.Visible = false;
+            mainPanel.Enabled = true;
+            buttonsPanel.Enabled = true;
+        }
+
+        private void updateRfpDocument()
         {
             using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName))
             {
@@ -116,7 +131,6 @@ namespace RFPBuilder
                 }
                 rfpDocument.update();
             }
-            
             File.SetLastWriteTime(filePath, DateTime.Now);
         }
 
