@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace RFPBuilder
@@ -13,13 +11,59 @@ namespace RFPBuilder
     {
         private static SqlCommandBuilder moduleBuilder, responseBuilder, positionBuilder, viewRFPBuilder;
         private static SqlDataAdapter moduleAdapter, responseAdapter, positionAdapter, viewRFPAdapter;
-        private const string DB_CONNECTION_MASTER = @"Server=localhost;Integrated security=SSPI;database=master";
-        private const string DB_CONNECTION_RFP = @"Server=localhost;Integrated security=SSPI;database=RequestForProposal";
+        private static readonly string DB_CONNECTION_MASTER = DBHandler.initMasterConnectionString();
+        private static readonly string DB_CONNECTION_RFP = DBHandler.initDatabaseConnectionString();
         private const string moduleMember = "Module";
         private const string responseMember = "Response";
         private const string positionMember = "Position";
         private const string viewRFPMember = "RFP";
         private static SqlConnection connection;
+
+        private static string initMasterConnectionString()
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "\\RFPBuilder.config");
+            if (File.Exists(path))
+            {
+                string[] configurations = File.ReadAllLines(path);
+                foreach (string config in configurations)
+                {
+                    if (config.Split('=').Length == 1)
+                    {
+                        continue;
+                    }
+                    string propetyName = config.Split('=')[0];
+                    string propertyValue = config.Split('=')[1];
+                    if(propetyName.ToUpper().Equals("SERVERNAME"))
+                    {
+                        return String.Format(@"Server={0};Integrated security=SSPI;database=master", propertyValue);
+                    }
+                }
+            }
+            return "";
+        }
+        private static string initDatabaseConnectionString()
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "\\RFPBuilder.config");
+            if (File.Exists(path))
+            {
+                string[] configurations = File.ReadAllLines(path);
+                foreach (string config in configurations)
+                {
+                    if(config.Split('=').Length == 1)
+                    {
+                        continue;
+                    }
+                    string propetyName = config.Split('=')[0];
+                    string propertyValue = config.Split('=')[1];
+                    if (propetyName.ToUpper().Equals("SERVERNAME"))
+                    {
+                        return String.Format(@"Server={0};Integrated security=SSPI;database=RequestForProposal", propertyValue);
+                    }
+                }
+            }
+            return "";
+        }
+
         public static void deleteDB() {
             string commandSTR = "alter database RequestForProposal set single_user with rollback immediate";
             using (var conn = new SqlConnection(DB_CONNECTION_MASTER)) {
@@ -554,7 +598,7 @@ namespace RFPBuilder
             return description;
         }
 
-        public static bool checkMasterResponse(string responseId)
+        public static bool checkResponseExists(string responseId)
         {
             string sql = "select * from ResponseLookup where ResponseId = @ResponseId";
             using (var con = new SqlConnection(DB_CONNECTION_RFP))
