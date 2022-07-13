@@ -110,7 +110,7 @@
             this.Mapping.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Mapping.Location = new System.Drawing.Point(0, 120);
             this.Mapping.Name = "Mapping";
-            this.Mapping.SelectedIndex = 1;
+            this.Mapping.SelectedIndex = 2;
             this.Mapping.Size = new System.Drawing.Size(1000, 520);
             this.Mapping.TabIndex = 0;
             this.Mapping.UseSelectable = true;
@@ -240,6 +240,7 @@
             this.PositionMapGrid.TabIndex = 2;
             this.PositionMapGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.PositionMapGrid_SortStringChanged);
             this.PositionMapGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.PositionMapGrid_FilterStringChanged);
+            this.PositionMapGrid.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.PositionMapGrid_CellValidating);
             // 
             // MappingForm
             // 

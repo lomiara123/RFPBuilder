@@ -18,7 +18,7 @@ namespace RFPBuilder
         private const string positionMember = "Position";
         private const string viewRFPMember = "RFP";
         private static SqlConnection connection;
-        private const string configFilename = "RFPBuilder.config";
+        private const string configFilename = "app.config";
         private static string initMasterConnectionString() {
             var path = Path.Combine(Directory.GetCurrentDirectory(), configFilename);
             if (File.Exists(path)) {
@@ -396,10 +396,6 @@ namespace RFPBuilder
                                         command.Parameters[4].Value = requirement.Response != null ? DBHandler.getMasterResponse(RFPName, requirement.Response) : (object)DBNull.Value;
                                         command.Parameters[5].Value = requirement.Comments != null ? requirement.Comments : (object)DBNull.Value;
                                         command.ExecuteNonQuery();
-                                            /*
-                                        if (command.ExecuteNonQuery() != 1) {
-                                            throw new InvalidProgramException();
-                                        }*/
                                     }
                                 }
                                 transaction.Commit();
@@ -414,8 +410,9 @@ namespace RFPBuilder
         }
 
         public static DataTable getPositionMap(string RFPName) {
-            string selectModules = "select *" +
-                            "from PositionMap";
+            string selectModules = "select * " +
+                            "from PositionMap " +
+                            "where RFPName = '" + RFPName + "'";
             DataTable dt = new DataTable();
             using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
                 conn.Open();

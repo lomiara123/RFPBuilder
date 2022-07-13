@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace RFPBuilder
 {
@@ -145,6 +146,40 @@ namespace RFPBuilder
             if (!e.Cancel) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "";
             }
+        }
+
+        private void PositionMapGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e) {
+            string headerText = PositionMapGrid.Columns[e.ColumnIndex].HeaderText;
+
+            if (ResponsesGrid.Rows[e.RowIndex].IsNewRow)
+            {
+                return;
+            }
+
+            if (headerText.Equals("SkipRows") &&
+               !string.IsNullOrEmpty(e.FormattedValue.ToString()) &&
+               !checkSkipRowsFormat(e.FormattedValue.ToString())) {
+                PositionMapGrid.Rows[e.RowIndex].ErrorText = "Skip rows is formatted incorrectly. Example: 1-4,6,8,9-12";
+                e.Cancel = true;
+            }
+
+            if (!e.Cancel) {
+                PositionMapGrid.Rows[e.RowIndex].ErrorText = "";
+            }
+        }
+
+        private bool checkSkipRowsFormat(string skipRows) {
+            var regex = new Regex(@"((\d+-\d+)*(\d+)*)(,(\d+-\d+)*(\d+)*)*");
+            var m = regex.Match(skipRows);
+            while (m.Success)
+            {
+                if (m.Value == skipRows)
+                {
+                    return true;
+                }
+                m = m.NextMatch();
+            }
+            return false;
         }
     }
 }
