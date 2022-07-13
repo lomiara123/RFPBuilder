@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.topPanel = new System.Windows.Forms.Panel();
+            this.buttonsPanel = new System.Windows.Forms.Panel();
             this.buttonMinimize = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.mainPanel = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnMapping = new System.Windows.Forms.Button();
             this.btnView = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.buttonsPanel = new System.Windows.Forms.Panel();
+            this.loadingGIF = new System.Windows.Forms.PictureBox();
             this.topPanel.SuspendLayout();
-            this.mainPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.buttonsPanel.SuspendLayout();
+            this.mainPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.loadingGIF)).BeginInit();
             this.SuspendLayout();
             // 
             // topPanel
@@ -57,6 +57,15 @@
             this.topPanel.Size = new System.Drawing.Size(1000, 96);
             this.topPanel.TabIndex = 0;
             this.topPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topPanel_MouseDown);
+            // 
+            // buttonsPanel
+            // 
+            this.buttonsPanel.Controls.Add(this.buttonMinimize);
+            this.buttonsPanel.Controls.Add(this.btnClose);
+            this.buttonsPanel.Location = new System.Drawing.Point(829, 3);
+            this.buttonsPanel.Name = "buttonsPanel";
+            this.buttonsPanel.Size = new System.Drawing.Size(168, 82);
+            this.buttonsPanel.TabIndex = 9;
             // 
             // buttonMinimize
             // 
@@ -107,16 +116,6 @@
             this.mainPanel.Name = "mainPanel";
             this.mainPanel.Size = new System.Drawing.Size(482, 298);
             this.mainPanel.TabIndex = 7;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Image = global::RFPBuilder.Properties.Resources.output_onlinegiftools;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 557);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(121, 84);
-            this.pictureBox1.TabIndex = 8;
-            this.pictureBox1.TabStop = false;
             // 
             // btnUpdate
             // 
@@ -188,14 +187,16 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // buttonsPanel
+            // loadingGIF
             // 
-            this.buttonsPanel.Controls.Add(this.buttonMinimize);
-            this.buttonsPanel.Controls.Add(this.btnClose);
-            this.buttonsPanel.Location = new System.Drawing.Point(829, 3);
-            this.buttonsPanel.Name = "buttonsPanel";
-            this.buttonsPanel.Size = new System.Drawing.Size(168, 82);
-            this.buttonsPanel.TabIndex = 9;
+            this.loadingGIF.BackColor = System.Drawing.Color.Transparent;
+            this.loadingGIF.Image = global::RFPBuilder.Properties.Resources.output_onlinegiftools;
+            this.loadingGIF.Location = new System.Drawing.Point(0, 552);
+            this.loadingGIF.Name = "loadingGIF";
+            this.loadingGIF.Size = new System.Drawing.Size(124, 89);
+            this.loadingGIF.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.loadingGIF.TabIndex = 8;
+            this.loadingGIF.TabStop = false;
             // 
             // MainForm
             // 
@@ -204,7 +205,7 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1000, 640);
             this.ControlBox = false;
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.loadingGIF);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.topPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -213,9 +214,9 @@
             this.Text = "Form1";
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
-            this.mainPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.buttonsPanel.ResumeLayout(false);
+            this.mainPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.loadingGIF)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -232,7 +233,7 @@
         private System.Windows.Forms.Panel mainPanel;
         private System.Windows.Forms.Button buttonMinimize;
         private System.Windows.Forms.Button btnClose;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox loadingGIF;
         private System.Windows.Forms.Panel buttonsPanel;
     }
 }

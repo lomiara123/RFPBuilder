@@ -16,8 +16,7 @@ namespace RFPBuilder
         public string ModuleId;
         public int row = 1;
         public IEnumerator<Requirement> GetEnumerator() {
-            if (Requirement == 0 || Response == 0)
-            {
+            if (Requirement == 0 || Response == 0) {
                 yield break;
             }
 
@@ -49,8 +48,12 @@ namespace RFPBuilder
         public void updateRequirement(Requirement requirement) {
             xlRange.Cells[row, Requirement].Value = requirement.Id;
             xlRange.Cells[row, Response].Value = requirement.Response;
-            xlRange.Cells[row, Comments].Value = requirement.Comments;
-            xlRange.Cells[row, Criticality].Value = requirement.Criticality;
+            if (Comments != 0) {
+                xlRange.Cells[row, Comments].Value = requirement.Comments;
+            }
+            if (Criticality != 0) {
+                xlRange.Cells[row, Criticality].Value = requirement.Criticality;
+            }
         }
 
         private int findColumnIndex(Excel.Range xlRange, string value) {
@@ -65,8 +68,7 @@ namespace RFPBuilder
         }
         //expected input: "1,2,4-10,13,15"
         private void initSkipRows(string skipRowsStr) {
-            if (skipRowsStr == null || skipRowsStr == "")
-            {
+            if (skipRowsStr == null || skipRowsStr == "") {
                 return;
             }
             SkipRows = new HashSet<int>();

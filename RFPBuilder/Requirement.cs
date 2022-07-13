@@ -11,7 +11,7 @@
 
         }
 
-        public Requirement(string id, string response, string comments, string criticality){
+        public Requirement(string id, string response, string comments, string criticality) {
             Id = id;
             Response = response;
             Comments = comments;

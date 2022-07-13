@@ -121,6 +121,7 @@
             this.RFPGrid.TabIndex = 2;
             this.RFPGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.RFPGrid_SortStringChanged);
             this.RFPGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.RFPGrid_FilterStringChanged);
+            this.RFPGrid.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.RFPGrid_RowValidating);
             // 
             // RFPForm
             // 

@@ -48,42 +48,33 @@ namespace RFPBuilder
             this.WindowState = FormWindowState.Minimized;
         }
 
-        private void PositionMapGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
-        {
+        private void PositionMapGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e) {
             ds.Tables[2].DefaultView.RowFilter = PositionMapGrid.FilterString;
         }
 
-        private void PositionMapGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
-        {
+        private void PositionMapGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e) {
             ds.Tables[2].DefaultView.Sort = PositionMapGrid.SortString;
         }
 
-        private void ResponsesGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
-        {
+        private void ResponsesGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e) {
             ds.Tables[1].DefaultView.RowFilter = PositionMapGrid.FilterString;
         }
 
-        private void ResponsesGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
-        {
+        private void ResponsesGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e) {
             ds.Tables[1].DefaultView.Sort = ResponsesGrid.SortString;
         }
 
-        private void ModulesMapGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
-        {
+        private void ModulesMapGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e) {
             ds.Tables[0].DefaultView.RowFilter = ModulesMapGrid.FilterString;
         }
 
-        private void ModulesMapGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
-        {
+        private void ModulesMapGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e) {
             ds.Tables[0].DefaultView.Sort = ModulesMapGrid.SortString;
         }
         /// <summary>
         ///     Set response description text
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ResponsesGrid_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
+        private void ResponsesGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
             Int32 selectedCellCount = ResponsesGrid.GetCellCount(DataGridViewElementStates.Selected);
 
             if (selectedCellCount > 0)
@@ -97,8 +88,7 @@ namespace RFPBuilder
             }
         }
 
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
-        {
+        private void panel1_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
@@ -106,47 +96,39 @@ namespace RFPBuilder
             }
         }
 
-        private void ResponsesGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
-        {
+        private void ResponsesGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e) {
             string headerText = ResponsesGrid.Columns[e.ColumnIndex].HeaderText;
 
-            if (ResponsesGrid.Rows[e.RowIndex].IsNewRow)
-            {
+            if (ResponsesGrid.Rows[e.RowIndex].IsNewRow) {
                 return;
             }
 
             if (headerText.Equals("Master response indicator") && 
-                !DBHandler.checkResponseExists(e.FormattedValue.ToString()))
-            {
+                !DBHandler.checkResponseExists(e.FormattedValue.ToString())) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "Master response is incorrect";
                 e.Cancel = true;
             }
 
             if (headerText.Equals("RFP name") && 
-                string.IsNullOrEmpty(e.FormattedValue.ToString()))
-            {
+                string.IsNullOrEmpty(e.FormattedValue.ToString())) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "RFP name must not be empty";
                 e.Cancel= true;
             }
 
-            if (!e.Cancel)
-            {
+            if (!e.Cancel) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "";
             }
         }
 
-        private bool checkDuplicateResponse(int currentRow)
-        {
+        private bool checkDuplicateResponse(int currentRow) {
             string rfpName = ResponsesGrid.Rows[currentRow].Cells["RFP name"].Value.ToString();
             string masterResponse = ResponsesGrid.Rows[currentRow].Cells["Master response indicator"].Value.ToString();
 
-            for (int rowToCompare = 0; rowToCompare < ResponsesGrid.Rows.Count - 1; rowToCompare ++)
-            {
+            for (int rowToCompare = 0; rowToCompare < ResponsesGrid.Rows.Count - 1; rowToCompare ++) {
                 string rfpNameToCompare = ResponsesGrid.Rows[rowToCompare].Cells["RFP name"].Value.ToString();
                 string masterResponseToCompare = ResponsesGrid.Rows[rowToCompare].Cells["Master response indicator"].Value.ToString();
                 
-                if (currentRow != rowToCompare && rfpName == rfpNameToCompare && masterResponse == masterResponseToCompare)
-                {
+                if (currentRow != rowToCompare && rfpName == rfpNameToCompare && masterResponse == masterResponseToCompare) {
                     return true;
                 }
             }
@@ -154,16 +136,13 @@ namespace RFPBuilder
             return false;
         }
 
-        private void ResponsesGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
-        {
-            if (this.checkDuplicateResponse(e.RowIndex))
-            {
+        private void ResponsesGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e) {
+            if (this.checkDuplicateResponse(e.RowIndex)) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "Multiple mapping for one response is not allowed";
                 e.Cancel = true;
             }
 
-            if (!e.Cancel)
-            {
+            if (!e.Cancel) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "";
             }
         }
