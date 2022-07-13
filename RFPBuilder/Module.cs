@@ -68,10 +68,12 @@ namespace RFPBuilder
         }
         //expected input: "1,2,4-10,13,15"
         private void initSkipRows(string skipRowsStr) {
+            SkipRows = new HashSet<int>();
+
             if (skipRowsStr == null || skipRowsStr == "") {
                 return;
             }
-            SkipRows = new HashSet<int>();
+
             var rows = skipRowsStr.Split('\u002C'); //comma ,
             foreach (var row in rows) {
                 var periodArray = row.Split('\u002D'); //dash -

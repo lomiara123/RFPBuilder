@@ -19,44 +19,34 @@ namespace RFPBuilder
         private const string viewRFPMember = "RFP";
         private static SqlConnection connection;
         private const string configFilename = "RFPBuilder.config";
-        private static string initMasterConnectionString()
-        {
+        private static string initMasterConnectionString() {
             var path = Path.Combine(Directory.GetCurrentDirectory(), configFilename);
-            if (File.Exists(path))
-            {
+            if (File.Exists(path)) {
                 string[] configurations = File.ReadAllLines(path);
-                foreach (string config in configurations)
-                {
-                    if (config.Split('=').Length == 1)
-                    {
+                foreach (string config in configurations) {
+                    if (config.Split('=').Length == 1) {
                         continue;
                     }
                     string propetyName = config.Split('=')[0];
                     string propertyValue = config.Split('=')[1];
-                    if (propetyName.ToUpper().Equals("SERVERNAME"))
-                    {
+                    if (propetyName.ToUpper().Equals("SERVERNAME")) {
                         return String.Format(@"Server={0};Integrated security=SSPI;database=master", propertyValue);
                     }
                 }
             }
             return "";
         }
-        private static string initDatabaseConnectionString()
-        {
+        private static string initDatabaseConnectionString() {
             var path = Path.Combine(Directory.GetCurrentDirectory(), configFilename);
-            if (File.Exists(path))
-            {
+            if (File.Exists(path)) {
                 string[] configurations = File.ReadAllLines(path);
-                foreach (string config in configurations)
-                {
-                    if (config.Split('=').Length == 1)
-                    {
+                foreach (string config in configurations) {
+                    if (config.Split('=').Length == 1) {
                         continue;
                     }
                     string propetyName = config.Split('=')[0];
                     string propertyValue = config.Split('=')[1];
-                    if (propetyName.ToUpper().Equals("SERVERNAME"))
-                    {
+                    if (propetyName.ToUpper().Equals("SERVERNAME")) {
                         return String.Format(@"Server={0};Integrated security=SSPI;database=RequestForProposal", propertyValue);
                     }
                 }
@@ -90,8 +80,8 @@ namespace RFPBuilder
 
         public static bool checkModuleMappingExist(string rfpName) {
             string sql = "select * " +
-                          "from ModuleMap " +
-                          "where RFPName = @rfpName";
+                         "from ModuleMap " +
+                         "where RFPName = @rfpName";
 
             using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
                 conn.Open();
@@ -108,8 +98,8 @@ namespace RFPBuilder
 
         public static bool checkResponseMappingExist(string rfpName) {
             string sql = "select * " +
-                          "from ResponseMap " +
-                          "where RFPName = @rfpName";
+                         "from ResponseMap " +
+                         "where RFPName = @rfpName";
 
             using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
                 conn.Open();
@@ -126,8 +116,8 @@ namespace RFPBuilder
 
         public static bool checkPositionMappingExist(string rfpName) {
             string sql = "select * " +
-                          "from PositionMap " +
-                          "where RFPName = @rfpName";
+                         "from PositionMap " +
+                         "where RFPName = @rfpName";
 
             using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
                 conn.Open();
@@ -198,8 +188,7 @@ namespace RFPBuilder
             }
         }
 
-        public static void initPositionMapping(string rfpName, string pathToRFP)
-        {
+        public static void initPositionMapping(string rfpName, string pathToRFP) {
             string insertPositionMapping = "insert into PositionMap" +
                                             "(RFPName, SheetName, ModuleId) " +
                                             "values ";
@@ -207,20 +196,16 @@ namespace RFPBuilder
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkBook = xlApp.Workbooks.Open(pathToRFP);
 
-            foreach(Excel.Worksheet xlWorkSheet in xlWorkBook.Worksheets)
-            {
+            foreach(Excel.Worksheet xlWorkSheet in xlWorkBook.Worksheets) {
                 insertPositionMapping += "('" + rfpName + "', '" + xlWorkSheet.Name + "', ''),";    
             }
-            if (pathToRFP != "")
-            {
+            if (pathToRFP != "") {
                 insertPositionMapping = insertPositionMapping.Remove(insertPositionMapping.Length - 1);
 
-                using (var conn = new SqlConnection(DB_CONNECTION_RFP))
-                {
+                using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
                     conn.Open();
 
-                    using (var command = new SqlCommand(insertPositionMapping, conn))
-                    {
+                    using (var command = new SqlCommand(insertPositionMapping, conn)) {
                         command.ExecuteNonQuery();
                     }
                 }
@@ -305,7 +290,7 @@ namespace RFPBuilder
                 command.ExecuteNonQuery();
             }
         }
-
+        
         private static void createModuleLookupTable(SqlConnection connection) {
             string createTable = "use RequestForProposal " +
                                  "CREATE TABLE ModuleLookup ( " +
@@ -331,14 +316,14 @@ namespace RFPBuilder
             using (var command = new SqlCommand(createTable, connection)) {
                 command.ExecuteNonQuery();
             }
+            /*
             using (var command = new SqlCommand(insertValues, connection)) {
                 int recordsAffectd = command.ExecuteNonQuery();
             }
-
+            */
         }
-
-        private static void createResponseLookupTable(SqlConnection connection)
-        {
+        
+        private static void createResponseLookupTable(SqlConnection connection) {
             string createTable = "use RequestForProposal " +
                                  "CREATE TABLE ResponseLookup ( " +
                                     "ResponseId varchar(255) NOT NULL," +
@@ -348,7 +333,7 @@ namespace RFPBuilder
             string insertValues = "INSERT INTO ResponseLookup " +
                                  "(ResponseId, Description)" +
                                  "VALUES ";
-            var map = new Dictionary<string, string>()
+            var map = new Dictionary<string, string>() 
             {
                 { "S" , "Standard" },
                 { "F" , "Future" },
@@ -374,9 +359,17 @@ namespace RFPBuilder
             string insert = "if not exists (select * from MasterRFP " +
                                                 "where RFPName = @RFPName and ModuleId = @ModuleId and ReqId = @ReqId) " +
                             "begin " +
-                            "insert into MasterRFP " +
-                                "(RFPName, ModuleId, ReqId, Criticality, Response, Comments)" +
-                                " values(@RFPName, @ModuleId, @ReqId, @Criticality, @Response, @Comments) " +
+                                "insert into MasterRFP " +
+                                    "(RFPName, ModuleId, ReqId, Criticality, Response, Comments)" +
+                                    " values(@RFPName, @ModuleId, @ReqId, @Criticality, @Response, @Comments) " +
+                            "end " +
+                            "else " +
+                            "begin " +
+                                "update MasterRFP set " +
+                                    "Criticality = @Criticality, " +
+                                    "Response = @Response, " +
+                                    "Comments = @Comments " +
+                                "where RFPName = @RFPName and ModuleId = @ModuleId and ReqId = @ReqId " +
                             "end";
             if (filePath == null || filePath == "")
                 return;
@@ -400,7 +393,7 @@ namespace RFPBuilder
                                         command.Parameters[1].Value = module.ModuleId;
                                         command.Parameters[2].Value = requirement.Id;
                                         command.Parameters[3].Value = requirement.Criticality != null ? requirement.Criticality : (object)DBNull.Value;
-                                        command.Parameters[4].Value = requirement.Response != null ? requirement.Response : (object)DBNull.Value;
+                                        command.Parameters[4].Value = requirement.Response != null ? DBHandler.getMasterResponse(RFPName, requirement.Response) : (object)DBNull.Value;
                                         command.Parameters[5].Value = requirement.Comments != null ? requirement.Comments : (object)DBNull.Value;
                                         command.ExecuteNonQuery();
                                             /*
@@ -415,28 +408,7 @@ namespace RFPBuilder
                                 throw;
                             }
                         }
-                        
-                        command.ExecuteNonQuery();
                     }
-                }
-            }
-        }
-
-
-        public static void populateModuleCell(System.Windows.Forms.DataGridViewComboBoxCell dgvCB) {
-            string selectModules = "select *" +
-                            "from ModuleLookup";
-
-            using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
-                conn.Open();
-                using (var command = new SqlCommand(selectModules, conn)) {
-
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read()) {
-                        dgvCB.Items.Add(reader["ModuleId"].ToString());
-                        dgvCB.Value = reader["ModuleId"].ToString();
-                    }
-                    reader.Close();
                 }
             }
         }
@@ -459,8 +431,7 @@ namespace RFPBuilder
             DataSet ds = new DataSet();
             string selectModulesStr, selectResponsesStr, selectPositionStr;
 
-            if (RFPName != "")
-            {
+            if (RFPName != "") {
                 selectModulesStr = "select * from ModuleMap where RFPName = @RFPName;";
                 selectResponsesStr = "select RFPName as [RFP name], ResponseMaster as [Master response indicator], ResponseRFP as [Customer response indicator] from ResponseMap where RFPName = @RFPName;";
                 selectPositionStr = "select * from PositionMap where RFPName = @RFPName;";
@@ -575,20 +546,40 @@ namespace RFPBuilder
             return Response;
         }
 
-        public static string getResponseDescription(string responseId)
+        public static string getMasterResponse(string RFPName, string Response)
         {
-            string sql = "select * from ResponseLookup where ResponseId = @ResponseId";
-            string description = "";
+            string sql = "select * from ResponseMap where RFPName = @RFPName and ResponseRFP = @Response";
+
             using (var con = new SqlConnection(DB_CONNECTION_RFP))
             {
                 con.Open();
                 using (var command = new SqlCommand(sql, con))
                 {
+                    command.Parameters.AddWithValue("@RFPName", RFPName);
+                    command.Parameters.AddWithValue("@Response", Response);
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        return reader["ResponseMaster"].ToString();
+                    }
+                }
+            }
+
+            return Response;
+        }
+
+        public static string getResponseDescription(string responseId) {
+            string sql = "select * from ResponseLookup where ResponseId = @ResponseId";
+            string description = "";
+            using (var con = new SqlConnection(DB_CONNECTION_RFP)) {
+                con.Open();
+                using (var command = new SqlCommand(sql, con)) {
                     command.Parameters.AddWithValue("@ResponseId", responseId);
 
                     SqlDataReader reader = command.ExecuteReader();
-                    if(reader.HasRows)
-                    {
+                    if(reader.HasRows) {
                         reader.Read();
                         description = reader["Description"].ToString();
                     }
@@ -598,14 +589,11 @@ namespace RFPBuilder
             return description;
         }
 
-        public static bool checkResponseExists(string responseId)
-        {
+        public static bool checkResponseExists(string responseId) {
             string sql = "select * from ResponseLookup where ResponseId = @ResponseId";
-            using (var con = new SqlConnection(DB_CONNECTION_RFP))
-            {
+            using (var con = new SqlConnection(DB_CONNECTION_RFP)) {
                 con.Open();
-                using (var command = new SqlCommand(sql, con))
-                {
+                using (var command = new SqlCommand(sql, con)) {
                     command.Parameters.AddWithValue("@ResponseId", responseId);
 
                     SqlDataReader reader = command.ExecuteReader();

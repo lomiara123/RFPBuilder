@@ -32,7 +32,6 @@
             this.buttonsPanel = new System.Windows.Forms.Panel();
             this.buttonMinimize = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnMapping = new System.Windows.Forms.Button();
@@ -50,7 +49,6 @@
             // 
             this.topPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(117)))), ((int)(((byte)(233)))));
             this.topPanel.Controls.Add(this.buttonsPanel);
-            this.topPanel.Controls.Add(this.label1);
             this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.topPanel.Location = new System.Drawing.Point(0, 0);
             this.topPanel.Name = "topPanel";
@@ -94,16 +92,6 @@
             this.btnClose.Text = "X";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.buttonClose_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(76, 44);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(103, 16);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "EllipseSolutions";
             // 
             // mainPanel
             // 
@@ -213,7 +201,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.topPanel.ResumeLayout(false);
-            this.topPanel.PerformLayout();
             this.buttonsPanel.ResumeLayout(false);
             this.mainPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.loadingGIF)).EndInit();
@@ -224,7 +211,6 @@
         #endregion
 
         private System.Windows.Forms.Panel topPanel;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.Button btnMapping;
         private System.Windows.Forms.Button btnSave;
