@@ -504,12 +504,13 @@ namespace RFPBuilder
             viewRFPAdapter.Update(ds, viewRFPMember);
         }
 
-        public static (string response, string comments) getRequirement(string ReqID, string RFPName) {
-            string sql = "select * from MasterRFP where ReqId = @ReqId";
+        public static (string response, string comments) getRequirement(string RFPName, string ModuleId ,string ReqID ) {
+            string sql = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId";
             using (var con = new SqlConnection(DB_CONNECTION_RFP)) {
                 con.Open();
                 using (var command = new SqlCommand(sql, con))  {
                     command.Parameters.AddWithValue("@ReqId", ReqID);
+                    command.Parameters.AddWithValue("@ModuleId", ModuleId);
 
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows) {

@@ -57,6 +57,10 @@ namespace RFPBuilder
         }
 
         private void RFPGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e) {
+            if (e.RowIndex == 0 )
+            {
+                return;
+            }
             if (this.checkDuplicateResponse(e.RowIndex)) {
                 RFPGrid.Rows[e.RowIndex].ErrorText = "Multiple responses for one requirement is not allowed";
                 e.Cancel = true;

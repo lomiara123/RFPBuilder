@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,7 +22,7 @@ namespace RFPBuilder
         public MainForm() {
             InitializeComponent();
 
-            loadingGIF.Visible = false;
+            loadingPanel.Visible = false;
 
             if (!DBHandler.checkDatabaseExist()) {
                 DBHandler.createDB();
@@ -88,14 +89,14 @@ namespace RFPBuilder
         private void setFormEnabled(bool set) {
             buttonsPanel.Enabled = set;
             mainPanel.Enabled = set;
-            loadingGIF.Visible = !set;
+            loadingPanel.Visible = !set;
         }
 
         private void updateRfpDocument() {
             using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName)) {
                 foreach (var module in rfpDocument) {
                     foreach (var requirement in module) {
-                        (requirement.Response, requirement.Comments) = DBHandler.getRequirement(requirement.Id, RFPName);
+                        (requirement.Response, requirement.Comments) = DBHandler.getRequirement(RFPName, module.ModuleId, requirement.Id);
                         if (requirement.Response != "") {
                             module.updateRequirement(requirement);
                         }

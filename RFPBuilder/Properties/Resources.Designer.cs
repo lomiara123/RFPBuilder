@@ -103,6 +103,16 @@ namespace RFPBuilder.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap imageedit_1_7461109384 {
+            get {
+                object obj = ResourceManager.GetObject("imageedit_1_7461109384", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap output_onlinegiftools {
             get {
                 object obj = ResourceManager.GetObject("output-onlinegiftools", resourceCulture);

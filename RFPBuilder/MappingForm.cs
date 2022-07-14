@@ -37,6 +37,8 @@ namespace RFPBuilder
             ResponsesGrid.DataSource = ds.Tables[1].DefaultView;
             PositionMapGrid.DataSource = ds.Tables[2].DefaultView;
 
+            Mapping.TabPages.RemoveAt(0);
+
             responseDescriptionTextBox.Enabled = false;
         }
 
