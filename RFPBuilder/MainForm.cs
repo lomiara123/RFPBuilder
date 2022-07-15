@@ -93,6 +93,9 @@ namespace RFPBuilder
         }
 
         private void updateRfpDocument() {
+            if (filePath == null || filePath == "") {
+                return;
+            }
             using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName)) {
                 foreach (var module in rfpDocument) {
                     foreach (var requirement in module) {

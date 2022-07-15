@@ -171,7 +171,7 @@ namespace RFPBuilder
         }
 
         private bool checkSkipRowsFormat(string skipRows) {
-            var regex = new Regex(@"((\d+-\d+)*(\d+)*)(,(\d+-\d+)*(\d+)*)*");
+            var regex = new Regex(@"((\d+-\d+)*(\d+)*)((,\d+-\d+)*(,\d+)*)*");
             var m = regex.Match(skipRows);
             while (m.Success)
             {
