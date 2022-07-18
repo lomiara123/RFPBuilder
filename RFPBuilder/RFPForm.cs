@@ -57,7 +57,7 @@ namespace RFPBuilder
         }
 
         private void RFPGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e) {
-            if (e.RowIndex == 0 )
+            if (e.RowIndex == 0)
             {
                 return;
             }
@@ -76,7 +76,7 @@ namespace RFPBuilder
             string reqId = RFPGrid.Rows[currentRow].Cells["ReqId"].Value.ToString();
             string moduleId = RFPGrid.Rows[currentRow].Cells["ModuleId"].Value.ToString();
 
-            for (int rowToCompare = 0; rowToCompare < RFPGrid.Rows.Count - 1; rowToCompare++) {
+            for (int rowToCompare = 0; rowToCompare < RFPGrid.Rows.GetRowCount(DataGridViewElementStates.Visible); rowToCompare++) {
                 string rfpNameToCompare = RFPGrid.Rows[rowToCompare].Cells["RFPName"].Value.ToString();
                 string reqIdToCompare = RFPGrid.Rows[rowToCompare].Cells["ReqId"].Value.ToString();
                 string moduleIdToCompare = RFPGrid.Rows[rowToCompare].Cells["ModuleId"].Value.ToString();

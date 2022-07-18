@@ -46,13 +46,12 @@ namespace RFPBuilder
         }
 
         public void updateRequirement(Requirement requirement) {
-            xlRange.Cells[row, Requirement].Value = requirement.Id;
-            xlRange.Cells[row, Response].Value = requirement.Response;
+            if (Convert.ToString(xlRange.Cells[row, Response].Value) == "") {
+                xlRange.Cells[row, Response].Value = requirement.Response;
+                xlRange.Cells[row, Response].Interior.Color = Excel.XlRgbColor.rgbRed;
+            }
             if (Comments != 0) {
                 xlRange.Cells[row, Comments].Value = requirement.Comments;
-            }
-            if (Criticality != 0) {
-                xlRange.Cells[row, Criticality].Value = requirement.Criticality;
             }
         }
 
@@ -74,9 +73,9 @@ namespace RFPBuilder
                 return;
             }
 
-            var rows = skipRowsStr.Split('\u002C'); //comma ,
+            var rows = skipRowsStr.Split('\u002C'); //comma
             foreach (var row in rows) {
-                var periodArray = row.Split('\u002D'); //dash -
+                var periodArray = row.Split('\u002D'); //dash
                 if (periodArray.Length > 1) {
                     int start = int.Parse(periodArray[0]);
                     int end = int.Parse(periodArray[1]);

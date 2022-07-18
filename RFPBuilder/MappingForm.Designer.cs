@@ -110,7 +110,7 @@
             this.Mapping.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Mapping.Location = new System.Drawing.Point(0, 120);
             this.Mapping.Name = "Mapping";
-            this.Mapping.SelectedIndex = 2;
+            this.Mapping.SelectedIndex = 1;
             this.Mapping.Size = new System.Drawing.Size(1000, 520);
             this.Mapping.TabIndex = 0;
             this.Mapping.UseSelectable = true;
@@ -182,6 +182,7 @@
             // 
             // ResponsesGrid
             // 
+            this.ResponsesGrid.AllowUserToOrderColumns = true;
             this.ResponsesGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -222,6 +223,7 @@
             // 
             // PositionMapGrid
             // 
+            this.PositionMapGrid.AllowUserToOrderColumns = true;
             this.PositionMapGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));

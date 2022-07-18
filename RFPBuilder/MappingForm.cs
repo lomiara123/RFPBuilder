@@ -123,21 +123,6 @@ namespace RFPBuilder
             }
         }
 
-        private bool checkDuplicateResponse(int currentRow) {
-            string rfpName = ResponsesGrid.Rows[currentRow].Cells["RFP name"].Value.ToString();
-            string masterResponse = ResponsesGrid.Rows[currentRow].Cells["Master response indicator"].Value.ToString();
-
-            for (int rowToCompare = 0; rowToCompare < ResponsesGrid.Rows.Count - 1; rowToCompare ++) {
-                string rfpNameToCompare = ResponsesGrid.Rows[rowToCompare].Cells["RFP name"].Value.ToString();
-                string masterResponseToCompare = ResponsesGrid.Rows[rowToCompare].Cells["Master response indicator"].Value.ToString();
-                
-                if (currentRow != rowToCompare && rfpName == rfpNameToCompare && masterResponse == masterResponseToCompare) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         private void ResponsesGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e) {
             if (this.checkDuplicateResponse(e.RowIndex)) {
@@ -148,6 +133,25 @@ namespace RFPBuilder
             if (!e.Cancel) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "";
             }
+        }
+
+        private bool checkDuplicateResponse(int currentRow)
+        {
+            string rfpName = ResponsesGrid.Rows[currentRow].Cells["RFP name"].Value.ToString();
+            string masterResponse = ResponsesGrid.Rows[currentRow].Cells["Master response indicator"].Value.ToString();
+
+            for (int rowToCompare = 0; rowToCompare < ResponsesGrid.Rows.GetRowCount(DataGridViewElementStates.Visible); rowToCompare++)
+            {
+                string rfpNameToCompare = ResponsesGrid.Rows[rowToCompare].Cells["RFP name"].Value.ToString();
+                string masterResponseToCompare = ResponsesGrid.Rows[rowToCompare].Cells["Master response indicator"].Value.ToString();
+
+                if (currentRow != rowToCompare && rfpName == rfpNameToCompare && masterResponse == masterResponseToCompare)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void PositionMapGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e) {

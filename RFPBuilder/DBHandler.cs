@@ -391,7 +391,7 @@ namespace RFPBuilder
                                     foreach (var requirement in module) {
                                         command.Parameters[0].Value = RFPName;
                                         command.Parameters[1].Value = module.ModuleId;
-                                        command.Parameters[2].Value = requirement.Id;
+                                        command.Parameters[2].Value = requirement.Id != null ? requirement.Id : "";
                                         command.Parameters[3].Value = requirement.Criticality != null ? requirement.Criticality : (object)DBNull.Value;
                                         command.Parameters[4].Value = requirement.Response != null ? DBHandler.getMasterResponse(RFPName, requirement.Response) : (object)DBNull.Value;
                                         command.Parameters[5].Value = requirement.Comments != null ? requirement.Comments : (object)DBNull.Value;
@@ -505,15 +505,31 @@ namespace RFPBuilder
         }
 
         public static (string response, string comments) getRequirement(string RFPName, string ModuleId ,string ReqID ) {
-            string sql = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId";
+            string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId";
+            string selectRequirementGlobal = "select * from MasterRFP where ReqId = @ReqId";
+
             using (var con = new SqlConnection(DB_CONNECTION_RFP)) {
                 con.Open();
-                using (var command = new SqlCommand(sql, con))  {
+
+                using (var command = new SqlCommand(selectRequirementByModule, con))  {
                     command.Parameters.AddWithValue("@ReqId", ReqID);
                     command.Parameters.AddWithValue("@ModuleId", ModuleId);
 
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows) {
+                        reader.Read();
+                        string response = DBHandler.getCustResponse(RFPName, reader["Response"].ToString());
+                        return (response, reader["Comments"].ToString());
+                    }
+                }
+
+                using (var command = new SqlCommand(selectRequirementGlobal, con))
+                {
+                    command.Parameters.AddWithValue("@ReqId", ReqID);
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
                         reader.Read();
                         string response = DBHandler.getCustResponse(RFPName, reader["Response"].ToString());
                         return (response, reader["Comments"].ToString());
