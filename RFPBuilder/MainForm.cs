@@ -99,9 +99,10 @@ namespace RFPBuilder
             using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName)) {
                 foreach (var module in rfpDocument) {
                     foreach (var requirement in module) {
-                        (requirement.Response, requirement.Comments) = DBHandler.getRequirement(RFPName, module.ModuleId, requirement.Id);
+                        bool multipleResponses;
+                        (requirement.Response, requirement.Comments, multipleResponses) = DBHandler.getRequirement(RFPName, module.ModuleId, requirement.Id);
                         if (requirement.Response != "") {
-                            module.updateRequirement(requirement);
+                            module.updateRequirement(requirement, multipleResponses);
                         }
                     }
                 }

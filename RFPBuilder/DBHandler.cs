@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace RFPBuilder
@@ -238,9 +239,29 @@ namespace RFPBuilder
                                     "Criticality varchar(255), " +
                                     "Response varchar(255), " +
                                     "Comments varchar(1000), " +
-                                    "CONSTRAINT PK_RfpNameReqId PRIMARY KEY(RFPName, ReqId)" +
+                                    "CreatedDatetime datetime2 DEFAULT getdate(), " +
+                                    "CreatedBy varchar(100) DEFAULT system_user, " +
+                                    "ModifiedDatetime datetime2 DEFAULT getdate(), " +
+                                    "ModifiedBy varchar(100) DEFAULT system_user, " +
+                                    "CONSTRAINT PK_RfpNameReqId PRIMARY KEY(RFPName, ModuleId, ReqId)" +
                                  "); ";
+            string createAfterUpdateTrigger = "CREATE TRIGGER updateTrigger ON MasterRFP " +
+                                              "AFTER UPDATE " +
+                                              "AS " +
+                                              "BEGIN " +
+                                                  "SET NOCOUNT ON; " +
+                                                  "UPDATE MasterRFP " +
+                                                  "SET ModifiedBy = system_user, ModifiedDatetime = getdate() " +
+                                                  "FROM MasterRFP " +
+                                                  "INNER JOIN inserted i " +
+                                                  "ON MasterRFP.RFPName = i.RFPName and MasterRFP.ModuleID = i.ModuleID and MasterRFP.ReqID = i.ReqID " +
+                                              "END";
+
             using(var command = new SqlCommand(createTable, connection)) {
+                command.ExecuteNonQuery();
+            }
+            using (var command = new SqlCommand(createAfterUpdateTrigger, connection))
+            {
                 command.ExecuteNonQuery();
             }
         }
@@ -401,6 +422,7 @@ namespace RFPBuilder
                                 transaction.Commit();
                             } catch (Exception ex) {
                                 transaction.Rollback();
+                                _ = MessageBox.Show("Exception encountered during updating the databse \n Error: " + ex.Message);
                                 throw;
                             }
                         }
@@ -470,10 +492,10 @@ namespace RFPBuilder
             string selectRFPStr;
 
             if(RFPName != "") {
-                selectRFPStr = "select * from MasterRFP where RFPName = @RFPName";
+                selectRFPStr = "select RFPName, ModuleId, ReqId, Criticality, Response, Comments from MasterRFP where RFPName = @RFPName";
             }
             else {
-                selectRFPStr = "select * from MasterRFP";
+                selectRFPStr = "select RFPName, ModuleId, ReqId, Criticality, Response, Comments from MasterRFP";
             }
 
             connection = new SqlConnection(DB_CONNECTION_RFP);
@@ -504,12 +526,22 @@ namespace RFPBuilder
             viewRFPAdapter.Update(ds, viewRFPMember);
         }
 
-        public static (string response, string comments) getRequirement(string RFPName, string ModuleId ,string ReqID ) {
-            string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId";
-            string selectRequirementGlobal = "select * from MasterRFP where ReqId = @ReqId";
-
+        public static (string response, List<string> comments, bool multiple) getRequirement(string RFPName, string ModuleId ,string ReqID ) {
+            string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId order by ModifiedDatetime asc";
+            string selectRequirementGlobal = "select * from MasterRFP where ReqId = @ReqId order by ModifiedDatetime asc";
+            string selectCountOfResponses = "select count(distinct Response) from masterrfp where ReqId = @ReqId";
+            List<string> comments = new List<string>();
             using (var con = new SqlConnection(DB_CONNECTION_RFP)) {
                 con.Open();
+                bool multipleResponses = false;
+                using (var command = new SqlCommand(selectCountOfResponses, con)) {
+                    command.Parameters.AddWithValue("@ReqId", ReqID);
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    reader.Read();
+
+                    multipleResponses = (int)reader[0] > 1;
+                }
 
                 using (var command = new SqlCommand(selectRequirementByModule, con))  {
                     command.Parameters.AddWithValue("@ReqId", ReqID);
@@ -517,9 +549,14 @@ namespace RFPBuilder
 
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows) {
-                        reader.Read();
-                        string response = DBHandler.getCustResponse(RFPName, reader["Response"].ToString());
-                        return (response, reader["Comments"].ToString());
+                        string response = "";
+                        while (reader.Read())
+                        {
+                            response = DBHandler.getCustResponse(RFPName, reader["Response"].ToString());
+                            comments.Add(reader["Comments"].ToString());
+                        }
+
+                        return (response, comments, multipleResponses);
                     }
                 }
 
@@ -530,14 +567,19 @@ namespace RFPBuilder
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows)
                     {
-                        reader.Read();
-                        string response = DBHandler.getCustResponse(RFPName, reader["Response"].ToString());
-                        return (response, reader["Comments"].ToString());
+                        string response = "";
+                        while (reader.Read())
+                        {
+                            response = DBHandler.getCustResponse(RFPName, reader["Response"].ToString());
+                            comments.Add(reader["Comments"].ToString());
+                        }
+
+                        return (response, comments, multipleResponses);
                     }
                 }
             }
 
-            return ("", "");
+            return ("", "", false);
         }
 
         public static string getCustResponse(string RFPName, string Response) {

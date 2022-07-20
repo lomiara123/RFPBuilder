@@ -14,7 +14,7 @@ namespace RFPBuilder
     {
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
-
+        public readonly string RFPNameColumn, ModuleColumn, RequirementColumn, CriticalityColumn, ResponseColumn, CommentsColumn;
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -76,7 +76,7 @@ namespace RFPBuilder
             string reqId = RFPGrid.Rows[currentRow].Cells["ReqId"].Value.ToString();
             string moduleId = RFPGrid.Rows[currentRow].Cells["ModuleId"].Value.ToString();
 
-            for (int rowToCompare = 0; rowToCompare < RFPGrid.Rows.GetRowCount(DataGridViewElementStates.Visible); rowToCompare++) {
+            for (int rowToCompare = 0; rowToCompare < RFPGrid.Rows.GetRowCount(DataGridViewElementStates.Visible) - 1; rowToCompare++) {
                 string rfpNameToCompare = RFPGrid.Rows[rowToCompare].Cells["RFPName"].Value.ToString();
                 string reqIdToCompare = RFPGrid.Rows[rowToCompare].Cells["ReqId"].Value.ToString();
                 string moduleIdToCompare = RFPGrid.Rows[rowToCompare].Cells["ModuleId"].Value.ToString();

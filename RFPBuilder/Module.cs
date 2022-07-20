@@ -29,7 +29,7 @@ namespace RFPBuilder
 
                     yield return new Requirement(requirement,
                                                  response,
-                                                 comments,
+                                                 new List<string> { comments },
                                                  criticality);
                 }
             }
@@ -45,14 +45,26 @@ namespace RFPBuilder
             initSkipRows(skipRows);
         }
 
-        public void updateRequirement(Requirement requirement) {
+        public void updateRequirement(Requirement requirement, bool multipleResponses) {
             if (Convert.ToString(xlRange.Cells[row, Response].Value) == "") {
                 xlRange.Cells[row, Response].Value = requirement.Response;
-                xlRange.Cells[row, Response].Interior.Color = Excel.XlRgbColor.rgbRed;
+                if (multipleResponses) {
+                    xlRange.Cells[row, Response].Interior.Color = Excel.XlRgbColor.rgbRed;
+                } 
+                else {
+                    xlRange.Cells[row, Response].Interior.Color = Excel.XlRgbColor.rgbGreen;
+                }
             }
             if (Comments != 0) {
+                for (int i = 0; i < requirement.Comments.Count; i++) {
+                    xlRange.Cells[row, Comments + i].Value = requirement.Comments[i];
+                }
+            }
+          /*  
+             if (Comments != 0) {
                 xlRange.Cells[row, Comments].Value = requirement.Comments;
             }
+          */
         }
 
         private int findColumnIndex(Excel.Range xlRange, string value) {
