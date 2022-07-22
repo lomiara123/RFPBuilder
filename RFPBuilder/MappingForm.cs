@@ -140,7 +140,7 @@ namespace RFPBuilder
             string rfpName = ResponsesGrid.Rows[currentRow].Cells["RFP name"].Value.ToString();
             string masterResponse = ResponsesGrid.Rows[currentRow].Cells["Master response indicator"].Value.ToString();
 
-            for (int rowToCompare = 0; rowToCompare < ResponsesGrid.Rows.GetRowCount(DataGridViewElementStates.Visible); rowToCompare++)
+            for (int rowToCompare = 0; rowToCompare < ResponsesGrid.Rows.GetRowCount(DataGridViewElementStates.Visible) - 1; rowToCompare++)
             {
                 string rfpNameToCompare = ResponsesGrid.Rows[rowToCompare].Cells["RFP name"].Value.ToString();
                 string masterResponseToCompare = ResponsesGrid.Rows[rowToCompare].Cells["Master response indicator"].Value.ToString();

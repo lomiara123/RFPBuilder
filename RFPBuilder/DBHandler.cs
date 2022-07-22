@@ -161,57 +161,195 @@ namespace RFPBuilder
             }
         }
         public static void initResponseMapping(string rfpName) {
-            string selectModules = "select * " +
-                                   "from ResponseLookup";
-            string insertModuleMapping = "insert into ResponseMap" +
-                                         "(RFPName, ResponseMaster) " +
-                                         "VALUES ";
+            if (rfpName == null || rfpName == "") {
+                return;
+            }
+            string selectMapCount = "select top 1 RFPName, count(RFPName) as mapCount " +
+                                    "from ResponseMap " +
+                                    "group by RFPName " +
+                                    "order by count(RFPName) desc";
+            string RFPNAME = "";
             using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
                 conn.Open();
 
-                using (var command = new SqlCommand(selectModules, conn)) {
+                using (var command = new SqlCommand(selectMapCount, conn)) {
                     var reader = command.ExecuteReader();
 
-                    while (reader.Read()) {
-                        string tmp = "('" + rfpName + "', '" + reader["ResponseId"].ToString() + "'),";
-
-                        insertModuleMapping += tmp;
+                    if (reader.HasRows) {
+                        reader.Read();
+                        RFPNAME = reader["RFPName"].ToString();
                     }
-
-                    insertModuleMapping = insertModuleMapping.Remove(insertModuleMapping.Length - 1);
 
                     reader.Close();
                 }
-
-                using (var command = new SqlCommand(insertModuleMapping, conn)) {
-                    command.ExecuteNonQuery();
+                if(RFPNAME == "") {
+                    initBlankResponseMapping(conn, rfpName);
+                }
+                else {
+                    initResponseMappingFromExistingMapping(conn, rfpName, RFPNAME);
                 }
             }
         }
 
+        public static void initResponseMappingFromExistingMapping(SqlConnection connection, string newRFP, string rfpToInitFrom)
+        {
+            string selectMap = "select * " +
+                               "from ResponseMap " +
+                               "where RFPName = @Rfpname";
+            string insertResponseMapping = "insert into ResponseMap" +
+                                         "(RFPName, ResponseMaster, ResponseRFP) " +
+                                         "VALUES ";
+            using (var command = new SqlCommand(selectMap, connection))
+            {
+                command.Parameters.AddWithValue("@RFPName", rfpToInitFrom);
+                var reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        insertResponseMapping += newInsertLine(newRFP, reader["ResponseMaster"], reader["ResponseRFP"]);
+                    }
+
+                    insertResponseMapping = insertResponseMapping.Remove(insertResponseMapping.Length - 1);
+                }
+                reader.Close();
+            }
+
+            using (var command = new SqlCommand(insertResponseMapping, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public static void initBlankResponseMapping(SqlConnection connection, string rfpName)
+        {
+            string selectModules = "select * " +
+                                   "from ResponseLookup";
+            string insertResponseMapping = "insert into ResponseMap" +
+                                         "(RFPName, ResponseMaster) " +
+                                         "VALUES ";
+            using (var command = new SqlCommand(selectModules, connection))
+            {
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    insertResponseMapping += newInsertLine(rfpName, reader["ResponseId"]);
+                }
+
+                insertResponseMapping = insertResponseMapping.Remove(insertResponseMapping.Length - 1);
+
+                reader.Close();
+            }
+
+            using (var command = new SqlCommand(insertResponseMapping, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
+        }
+        private static string newInsertLine(params object[] list)
+        {
+            string ret = "(";
+            for (int i = 0; i < list.Length; i++)
+            {
+                ret += "'" + Convert.ToString(list[i]) + "',";
+            }
+            ret = ret.Remove(ret.Length - 1);
+            ret += "),";
+            return ret;
+        }
         public static void initPositionMapping(string rfpName, string pathToRFP) {
+            if (rfpName == null || rfpName == "" || pathToRFP == null || pathToRFP == "") {
+                return;
+            }
+            string selectMapCount = "select top 1 RFPName, count(RFPName) as mapCount " +
+                                    "from PositionMap " +
+                                    "group by RFPName " +
+                                    "order by count(RFPName) desc";
+            string RFPNAME = "";
+            Excel.Application xlApp = new Excel.Application();
+            Excel.Workbook xlWorkBook = xlApp.Workbooks.Open(pathToRFP);
+            xlApp.DisplayAlerts = false;
+            using (var conn = new SqlConnection(DB_CONNECTION_RFP))
+            {
+                conn.Open();
+
+                using (var command = new SqlCommand(selectMapCount, conn))
+                {
+                    var reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        RFPNAME = reader["RFPName"].ToString();
+                    }
+
+                    reader.Close();
+                }
+                if (RFPNAME == "")
+                {
+                    initBlankPosiitonMapping(conn, rfpName, xlWorkBook);
+                }
+                else
+                {
+                    initPositionMappingFromExistingMapping(conn, rfpName, RFPNAME);
+                }
+            }
+
+            xlWorkBook.Close();
+            xlApp.Quit();
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApp);
+        }
+
+        public static void initPositionMappingFromExistingMapping(SqlConnection connection, string newRFP, string rfpToInitFrom)
+        {
+            string selectMap = "select * " +
+                               "from PositionMap " +
+                               "where RFPName = @Rfpname";
+            string insertPositionMapping = "insert into PositionMap" +
+                                         "(RFPName, SheetName, ModuleId, Requirement, Response, Comments, SkipRows, Criticality) " +
+                                         "VALUES ";
+            using (var command = new SqlCommand(selectMap, connection))
+            {
+                command.Parameters.AddWithValue("@RFPName", rfpToInitFrom);
+                var reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        //string tmp = "('" + newRFP + "', '" + reader["ResponseMaster"].ToString() + "', '" + reader["ResponseRFP"].ToString() + "'),";
+
+                        insertPositionMapping += newInsertLine(newRFP, reader["SheetName"], reader["ModuleId"], reader["Requirement"],
+                            reader["Response"], reader["Comments"], reader["SkipRows"], reader["Criticality"]);
+                    }
+
+                    insertPositionMapping = insertPositionMapping.Remove(insertPositionMapping.Length - 1);
+                }
+                reader.Close();
+            }
+
+            using (var command = new SqlCommand(insertPositionMapping, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public static void initBlankPosiitonMapping(SqlConnection connection, string rfpName, Excel.Workbook xlWorkBook) {
             string insertPositionMapping = "insert into PositionMap" +
                                             "(RFPName, SheetName, ModuleId) " +
                                             "values ";
-            
-            Excel.Application xlApp = new Excel.Application();
-            Excel.Workbook xlWorkBook = xlApp.Workbooks.Open(pathToRFP);
 
-            foreach(Excel.Worksheet xlWorkSheet in xlWorkBook.Worksheets) {
-                insertPositionMapping += "('" + rfpName + "', '" + xlWorkSheet.Name + "', ''),";    
-            }
-            if (pathToRFP != "") {
-                insertPositionMapping = insertPositionMapping.Remove(insertPositionMapping.Length - 1);
-
-                using (var conn = new SqlConnection(DB_CONNECTION_RFP)) {
-                    conn.Open();
-
-                    using (var command = new SqlCommand(insertPositionMapping, conn)) {
-                        command.ExecuteNonQuery();
-                    }
-                }
+            foreach (Excel.Worksheet xlWorkSheet in xlWorkBook.Worksheets) {
+                insertPositionMapping += newInsertLine(rfpName, xlWorkSheet.Name, "");
             }
             
+            insertPositionMapping = insertPositionMapping.Remove(insertPositionMapping.Length - 1);
+
+            using (var command = new SqlCommand(insertPositionMapping, connection)) {
+                command.ExecuteNonQuery();
+            }
         }
 
         public static void createDB() {
@@ -579,7 +717,7 @@ namespace RFPBuilder
                 }
             }
 
-            return ("", "", false);
+            return ("", new List<string> { "" }, false);
         }
 
         public static string getCustResponse(string RFPName, string Response) {

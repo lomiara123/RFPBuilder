@@ -57,14 +57,9 @@ namespace RFPBuilder
             }
             if (Comments != 0) {
                 for (int i = 0; i < requirement.Comments.Count; i++) {
-                    xlRange.Cells[row, Comments + i].Value = requirement.Comments[i];
+                    xlRange.Cells[row, Comments + i + 1].Value = requirement.Comments[i];
                 }
             }
-          /*  
-             if (Comments != 0) {
-                xlRange.Cells[row, Comments].Value = requirement.Comments;
-            }
-          */
         }
 
         private int findColumnIndex(Excel.Range xlRange, string value) {

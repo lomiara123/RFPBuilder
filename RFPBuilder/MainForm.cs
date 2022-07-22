@@ -40,6 +40,23 @@ namespace RFPBuilder
                     RFPName = Path.GetFileNameWithoutExtension(filePath);
                 }
             }
+            bool isMappingInitialized = false;
+            if (RFPName != "" && !DBHandler.checkResponseMappingExist(RFPName))
+            {
+                isMappingInitialized = true;
+                DBHandler.initResponseMapping(RFPName);
+            }
+
+            if (RFPName != "" && !DBHandler.checkPositionMappingExist(RFPName))
+            {
+                isMappingInitialized = true;
+                DBHandler.initPositionMapping(RFPName, filePath);
+            }
+
+            if (isMappingInitialized)
+            {
+                MessageBox.Show("Mapping was automatically initialized. Please review it.");
+            }
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {
@@ -47,14 +64,6 @@ namespace RFPBuilder
         }
 
         private void btnMapping_Click(object sender, EventArgs e) {
-            if (RFPName != "" && !DBHandler.checkResponseMappingExist(RFPName)) {
-                DBHandler.initResponseMapping(RFPName);
-            }
-
-            if (RFPName != "" && !DBHandler.checkPositionMappingExist(RFPName)) {
-                DBHandler.initPositionMapping(RFPName, filePath);
-            }
-
             this.Hide();
 
             MappingForm mappingForm = new MappingForm(RFPName);
