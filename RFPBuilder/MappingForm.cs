@@ -21,6 +21,7 @@ namespace RFPBuilder
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
+        string moduleMember, responseMember, positionMember;
 
         public string RFPName { get; set; }
         DataSet ds;
@@ -29,13 +30,13 @@ namespace RFPBuilder
             InitializeComponent();
 
             RFPName = rfpName;
-            string moduleMember, responseMember, positionMember;
+            
             
             (ds, moduleMember, responseMember, positionMember) = DBHandler.getMapping(RFPName);
 
-            ModulesMapGrid.DataSource = ds.Tables[0].DefaultView;
-            ResponsesGrid.DataSource = ds.Tables[1].DefaultView;
-            PositionMapGrid.DataSource = ds.Tables[2].DefaultView;
+            ModulesMapGrid.DataSource = ds.Tables[moduleMember].DefaultView;
+            ResponsesGrid.DataSource = ds.Tables[responseMember].DefaultView;
+            PositionMapGrid.DataSource = ds.Tables[positionMember].DefaultView;
 
             Mapping.TabPages.RemoveAt(0);
 
@@ -52,44 +53,32 @@ namespace RFPBuilder
         }
 
         private void PositionMapGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e) {
-            ds.Tables[2].DefaultView.RowFilter = PositionMapGrid.FilterString;
+            ds.Tables[positionMember].DefaultView.RowFilter = PositionMapGrid.FilterString;
         }
 
         private void PositionMapGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e) {
-            ds.Tables[2].DefaultView.Sort = PositionMapGrid.SortString;
+            ds.Tables[positionMember].DefaultView.Sort = PositionMapGrid.SortString;
         }
 
         private void ResponsesGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e) {
-            ds.Tables[1].DefaultView.RowFilter = PositionMapGrid.FilterString;
+            ds.Tables[responseMember].DefaultView.RowFilter = ResponsesGrid.FilterString;
         }
 
         private void ResponsesGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e) {
-            ds.Tables[1].DefaultView.Sort = ResponsesGrid.SortString;
+            ds.Tables[responseMember].DefaultView.Sort = ResponsesGrid.SortString;
         }
 
         private void ModulesMapGrid_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e) {
-            ds.Tables[0].DefaultView.RowFilter = ModulesMapGrid.FilterString;
+            ds.Tables[moduleMember].DefaultView.RowFilter = ModulesMapGrid.FilterString;
         }
 
         private void ModulesMapGrid_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e) {
-            ds.Tables[0].DefaultView.Sort = ModulesMapGrid.SortString;
+            ds.Tables[moduleMember].DefaultView.Sort = ModulesMapGrid.SortString;
         }
         /// <summary>
         ///     Set response description text
         /// </summary>
-        private void ResponsesGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
-            Int32 selectedCellCount = ResponsesGrid.GetCellCount(DataGridViewElementStates.Selected);
-
-            if (selectedCellCount > 0)
-            {
-                int selectedRow = ResponsesGrid.SelectedCells[0].RowIndex;
-                if (ResponsesGrid.Rows[selectedRow].Cells["Master response indicator"].Value != null)
-                {
-                    string response = ResponsesGrid.Rows[selectedRow].Cells["Master response indicator"].Value.ToString();
-                    responseDescriptionTextBox.Text = DBHandler.getResponseDescription(response);
-                }
-            }
-        }
+        
 
         private void panel1_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left)
@@ -98,34 +87,67 @@ namespace RFPBuilder
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
+        
 
-        private void ResponsesGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e) {
-            string headerText = ResponsesGrid.Columns[e.ColumnIndex].HeaderText;
+        private void PositionMapGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e) {
+            if (PositionMapGrid.Rows[e.RowIndex].Cells["Module"].Value == DBNull.Value &&
+                PositionMapGrid.Rows[e.RowIndex].Cells["RFP"].Value != DBNull.Value) {
+                PositionMapGrid.Rows[e.RowIndex].Cells["Module"].Value = "";
+            }
 
-            if (ResponsesGrid.Rows[e.RowIndex].IsNewRow) {
+            if (!e.Cancel && !string.IsNullOrEmpty(Convert.ToString(PositionMapGrid.Rows[e.RowIndex].Cells["Skip rows"].Value)) &&
+               !checkSkipRowsFormat(Convert.ToString(PositionMapGrid.Rows[e.RowIndex].Cells["Skip rows"].Value))) {
+                PositionMapGrid.Rows[e.RowIndex].ErrorText = "Skip rows is formatted incorrectly. Example: 1-4,6,8,9-12";
+                e.Cancel = true;
+            }
+
+            if (!e.Cancel) {
+                PositionMapGrid.Rows[e.RowIndex].ErrorText = "";
+            }
+        }
+        
+
+        private void PositionMapGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {
+            /*
+            if (PositionMapGrid.Rows[e.RowIndex].Cells["RFP"].Value == DBNull.Value &&
+                PositionMapGrid.Rows[e.RowIndex].Cells["Sheet"].Value == DBNull.Value) {
+                BindingManagerBase bm = PositionMapGrid.BindingContext[PositionMapGrid.DataSource, PositionMapGrid.DataMember];
+                ((DataRowView)bm.Current).Row.Delete();
+            }
+            */
+        }
+
+        private void ResponsesGrid_RowEnter(object sender, DataGridViewCellEventArgs e) {
+            Int32 selectedCellCount = ResponsesGrid.GetCellCount(DataGridViewElementStates.Selected);
+
+            if (selectedCellCount > 0) {
+                int selectedRow = ResponsesGrid.SelectedCells[0].RowIndex;
+                if (ResponsesGrid.Rows[selectedRow].Cells["Master response indicator"].Value != null) {
+                    string response = ResponsesGrid.Rows[selectedRow].Cells["Master response indicator"].Value.ToString();
+                    responseDescriptionTextBox.Text = DBHandler.getResponseDescription(response);
+                }
+                else {
+                    responseDescriptionTextBox.Text = "";
+                }
+            }
+        }
+
+        private void ResponsesGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e) {
+            if (e.RowIndex == 0) {
                 return;
             }
 
-            if (headerText.Equals("Master response indicator") && 
-                !DBHandler.checkResponseExists(e.FormattedValue.ToString())) {
+            if (!e.Cancel && !DBHandler.checkResponseExists(Convert.ToString(ResponsesGrid.Rows[e.RowIndex].Cells["Master response indicator"].Value))) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "Master response is incorrect";
                 e.Cancel = true;
             }
 
-            if (headerText.Equals("RFP name") && 
-                string.IsNullOrEmpty(e.FormattedValue.ToString())) {
+            if (!e.Cancel && string.IsNullOrEmpty(Convert.ToString(ResponsesGrid.Rows[e.RowIndex].Cells["RFP name"].Value))) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "RFP name must not be empty";
-                e.Cancel= true;
+                e.Cancel = true;
             }
 
-            if (!e.Cancel) {
-                ResponsesGrid.Rows[e.RowIndex].ErrorText = "";
-            }
-        }
-
-
-        private void ResponsesGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e) {
-            if (this.checkDuplicateResponse(e.RowIndex)) {
+            if (!e.Cancel && this.checkDuplicateResponse(e.RowIndex)) {
                 ResponsesGrid.Rows[e.RowIndex].ErrorText = "Multiple mapping for one response is not allowed";
                 e.Cancel = true;
             }
@@ -135,56 +157,42 @@ namespace RFPBuilder
             }
         }
 
-        private bool checkDuplicateResponse(int currentRow)
-        {
-            string rfpName = ResponsesGrid.Rows[currentRow].Cells["RFP name"].Value.ToString();
-            string masterResponse = ResponsesGrid.Rows[currentRow].Cells["Master response indicator"].Value.ToString();
-
-            for (int rowToCompare = 0; rowToCompare < ResponsesGrid.Rows.GetRowCount(DataGridViewElementStates.Visible) - 1; rowToCompare++)
-            {
-                string rfpNameToCompare = ResponsesGrid.Rows[rowToCompare].Cells["RFP name"].Value.ToString();
-                string masterResponseToCompare = ResponsesGrid.Rows[rowToCompare].Cells["Master response indicator"].Value.ToString();
-
-                if (currentRow != rowToCompare && rfpName == rfpNameToCompare && masterResponse == masterResponseToCompare)
-                {
-                    return true;
-                }
+        private void ResponsesGrid_RowValidated(object sender, DataGridViewCellEventArgs e) {
+            /*
+            if (ResponsesGrid.Rows[e.RowIndex].Cells["RFP name"].Value == DBNull.Value ||
+                ResponsesGrid.Rows[e.RowIndex].Cells["Master response indicator"].Value == DBNull.Value) {
+                BindingManagerBase bm = PositionMapGrid.BindingContext[ResponsesGrid.DataSource, ResponsesGrid.DataMember];
+                ((DataRowView)bm.Current).Row.Delete();
             }
-
-            return false;
-        }
-
-        private void PositionMapGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e) {
-            string headerText = PositionMapGrid.Columns[e.ColumnIndex].HeaderText;
-
-            if (ResponsesGrid.Rows[e.RowIndex].IsNewRow)
-            {
-                return;
-            }
-
-            if (headerText.Equals("SkipRows") &&
-               !string.IsNullOrEmpty(e.FormattedValue.ToString()) &&
-               !checkSkipRowsFormat(e.FormattedValue.ToString())) {
-                PositionMapGrid.Rows[e.RowIndex].ErrorText = "Skip rows is formatted incorrectly. Example: 1-4,6,8,9-12";
-                e.Cancel = true;
-            }
-
-            if (!e.Cancel) {
-                PositionMapGrid.Rows[e.RowIndex].ErrorText = "";
-            }
+            */
         }
 
         private bool checkSkipRowsFormat(string skipRows) {
             var regex = new Regex(@"((\d+-\d+)*(\d+)*)((,\d+-\d+)*(,\d+)*)*");
-            var m = regex.Match(skipRows);
-            while (m.Success)
-            {
-                if (m.Value == skipRows)
-                {
+            var match = regex.Match(skipRows);
+            
+            while (match.Success) {
+                if (match.Value == skipRows) {
                     return true;
                 }
-                m = m.NextMatch();
+                match = match.NextMatch();
             }
+            return false;
+        }
+
+        private bool checkDuplicateResponse(int currentRow) {
+            string rfpName = ResponsesGrid.Rows[currentRow].Cells["RFP name"].Value.ToString();
+            string masterResponse = ResponsesGrid.Rows[currentRow].Cells["Master response indicator"].Value.ToString();
+
+            for (int rowToCompare = 0; rowToCompare < ds.Tables[responseMember].DefaultView.Count; rowToCompare++) {
+                string rfpNameToCompare = ResponsesGrid.Rows[rowToCompare].Cells["RFP name"].Value.ToString();
+                string masterResponseToCompare = ResponsesGrid.Rows[rowToCompare].Cells["Master response indicator"].Value.ToString();
+
+                if (currentRow != rowToCompare && rfpName == rfpNameToCompare && masterResponse == masterResponseToCompare) {
+                    return true;
+                }
+            }
+
             return false;
         }
     }

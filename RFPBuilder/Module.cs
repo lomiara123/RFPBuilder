@@ -12,24 +12,28 @@ namespace RFPBuilder
     {
         Excel.Range xlRange;
         HashSet<int> SkipRows;
-        int Requirement, Response, Comments, Criticality;
+        string requirementColumn, responseColumn, commentsColumn, criticalityColumn;
         public string ModuleId;
         public int row = 1;
         public IEnumerator<Requirement> GetEnumerator() {
+            /*
             if (Requirement == 0 || Response == 0) {
                 yield break;
             }
-
-            for (; row < xlRange.Rows.Count; row++) {
+            */
+            for (; row <= xlRange.Rows.Count; row++) {
                 if (!SkipRows.Contains(row)) {
-                    string requirement = (string)xlRange.Cells[row, Requirement].Value2;
-                    string response = (string)xlRange.Cells[row, Response].Value2;
-                    string comments = Comments != 0 ? (string)xlRange.Cells[row, Comments].Value2 : "";
-                    string criticality = Criticality != 0 ? (string)xlRange.Cells[row, Criticality].Value2 : "";
+                    string requirement = Convert.ToString(xlRange.Cells[row, requirementColumn].Value2);
+                    if(requirement == null) {
+                        continue;
+                    }
+                    string response = Convert.ToString(xlRange.Cells[row, responseColumn].Value2);
+                    string comments = commentsColumn == "" || commentsColumn != null ? "" : Convert.ToString(xlRange.Cells[row, commentsColumn].Value2);
+                    string criticality = criticalityColumn == null || criticalityColumn == "" ? "" : Convert.ToString(xlRange.Cells[row, criticalityColumn].Value2);
 
                     yield return new Requirement(requirement,
                                                  response,
-                                                 new List<string> { comments },
+                                                 new List<string> { comments != null ? comments : ""},
                                                  criticality);
                 }
             }
@@ -38,26 +42,26 @@ namespace RFPBuilder
         public Module(string moduleId, Excel.Range range, string requirement, string response, string comments, string criticality, string skipRows) {
             ModuleId = moduleId;
             xlRange = range;
-            Requirement = findColumnIndex(range, requirement);
-            Response = findColumnIndex(range, response);
-            Comments = findColumnIndex(range, comments);
-            Criticality = findColumnIndex(range, criticality);
+            requirementColumn = requirement;
+            responseColumn = response;
+            commentsColumn = comments;
+            criticalityColumn = criticality;
             initSkipRows(skipRows);
         }
 
         public void updateRequirement(Requirement requirement, bool multipleResponses) {
-            if (Convert.ToString(xlRange.Cells[row, Response].Value) == "") {
-                xlRange.Cells[row, Response].Value = requirement.Response;
+            if (Convert.ToString(xlRange.Cells[row, responseColumn].Value) == "" || xlRange.Cells[row, responseColumn].Value == null) {
                 if (multipleResponses) {
-                    xlRange.Cells[row, Response].Interior.Color = Excel.XlRgbColor.rgbRed;
+                    xlRange.Cells[row, responseColumn].Interior.Color = Excel.XlRgbColor.rgbRed;
                 } 
                 else {
-                    xlRange.Cells[row, Response].Interior.Color = Excel.XlRgbColor.rgbGreen;
+                    xlRange.Cells[row, responseColumn].Interior.Color = Excel.XlRgbColor.rgbGreen;
                 }
+                xlRange.Cells[row, responseColumn].Value = requirement.Response;
             }
-            if (Comments != 0) {
+            if (commentsColumn != null || commentsColumn != "") {
                 for (int i = 0; i < requirement.Comments.Count; i++) {
-                    xlRange.Cells[row, Comments + i + 1].Value = requirement.Comments[i];
+                    xlRange.Cells[row, commentsColumn + i + 1].Value = requirement.Comments[i];
                 }
             }
         }

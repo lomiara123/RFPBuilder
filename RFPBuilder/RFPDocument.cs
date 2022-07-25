@@ -23,15 +23,15 @@ namespace RFPBuilder
                 Excel.Worksheet xlWorkSheet;
                 string reqirement, response, comments, criticality, skipRows, module;
                 try {
-                    xlWorkSheet = xlWorkBook.Sheets[dr["SheetName"].ToString()];
+                    xlWorkSheet = xlWorkBook.Sheets[dr["Sheet"].ToString()];
                     reqirement = dr["Requirement"].ToString();
                     response = dr["Response"].ToString();
                     comments = dr["Comments"].ToString();
                     criticality = dr["Criticality"].ToString();
-                    module = dr["ModuleId"].ToString();
-                    skipRows = dr["SkipRows"].ToString();
+                    module = dr["Module"].ToString();
+                    skipRows = dr["Skip rows"].ToString();
                 } catch (Exception ex) {
-                    MessageBox.Show("Error occurred during module initialization. \r\n. Message: \r\n " + ex.Message);
+                    MessageBox.Show("Error occurred during module initialization. \n. Error: " + ex.Message);
                     throw;
                 }
 

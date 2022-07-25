@@ -201,7 +201,6 @@
             this.ResponsesGrid.TabIndex = 2;
             this.ResponsesGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.ResponsesGrid_SortStringChanged);
             this.ResponsesGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.ResponsesGrid_FilterStringChanged);
-            this.ResponsesGrid.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.ResponsesGrid_CellValidating);
             this.ResponsesGrid.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResponsesGrid_RowEnter);
             this.ResponsesGrid.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.ResponsesGrid_RowValidating);
             // 
@@ -242,7 +241,8 @@
             this.PositionMapGrid.TabIndex = 2;
             this.PositionMapGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.PositionMapGrid_SortStringChanged);
             this.PositionMapGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.PositionMapGrid_FilterStringChanged);
-            this.PositionMapGrid.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.PositionMapGrid_CellValidating);
+            this.PositionMapGrid.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.PositionMapGrid_RowValidated);
+            this.PositionMapGrid.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.PositionMapGrid_RowValidating);
             // 
             // MappingForm
             // 

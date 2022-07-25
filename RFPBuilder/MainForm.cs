@@ -102,22 +102,34 @@ namespace RFPBuilder
         }
 
         private void updateRfpDocument() {
-            if (filePath == null || filePath == "") {
-                return;
-            }
-            using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName)) {
-                foreach (var module in rfpDocument) {
-                    foreach (var requirement in module) {
-                        bool multipleResponses;
-                        (requirement.Response, requirement.Comments, multipleResponses) = DBHandler.getRequirement(RFPName, module.ModuleId, requirement.Id);
-                        if (requirement.Response != "") {
-                            module.updateRequirement(requirement, multipleResponses);
+            try
+            {
+                if (filePath == null || filePath == "")
+                {
+                    return;
+                }
+                using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName))
+                {
+                    foreach (var module in rfpDocument)
+                    {
+                        foreach (var requirement in module)
+                        {
+                            bool multipleResponses;
+                            (requirement.Response, requirement.Comments, multipleResponses) = DBHandler.getRequirement(RFPName, module.ModuleId, requirement.Id);
+                            if (requirement.Response != "")
+                            {
+                                module.updateRequirement(requirement, multipleResponses);
+                            }
                         }
                     }
+                    rfpDocument.update();
                 }
-                rfpDocument.update();
+                File.SetLastWriteTime(filePath, DateTime.Now);
+            } 
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show("Error occurred during updating RFP document. \n Error: " + ex.Message);
             }
-            File.SetLastWriteTime(filePath, DateTime.Now);
         }
 
         private void buttonMinimize_Click(object sender, EventArgs e) {
