@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Data;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace RFPBuilder
 {
@@ -13,16 +13,20 @@ namespace RFPBuilder
         private Excel.Application xlApp;
         private Excel.Workbook xlWorkBook;
 
-        public IEnumerator<Module> GetEnumerator() {
-            DataTable dt = DBHandler.getPositionMap(RFPName);
-            if (dt == null || dt.Rows.Count == 0) {
+        public IEnumerator<Module> GetEnumerator()
+        {
+            DataTable dt = DBHandler.GetPositionMap(RFPName);
+            if (dt == null || dt.Rows.Count == 0)
+            {
                 MessageBox.Show("Please fill in the Position mapping");
                 yield break;
             }
-            foreach (DataRow dr in dt.Rows) {
+            foreach (DataRow dr in dt.Rows)
+            {
                 Excel.Worksheet xlWorkSheet;
                 string reqirement, response, comments, criticality, skipRows, module;
-                try {
+                try
+                {
                     xlWorkSheet = xlWorkBook.Sheets[dr["Sheet"].ToString()];
                     reqirement = dr["Requirement"].ToString();
                     response = dr["Response"].ToString();
@@ -30,7 +34,9 @@ namespace RFPBuilder
                     criticality = dr["Criticality"].ToString();
                     module = dr["Module"].ToString();
                     skipRows = dr["Skip rows"].ToString();
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     MessageBox.Show("Error occurred during module initialization. \n. Error: " + ex.Message);
                     throw;
                 }
@@ -45,22 +51,25 @@ namespace RFPBuilder
             }
         }
 
-        public RFPDocument(string path, string rfpname) {
+        public RFPDocument(string path, string rfpname)
+        {
             RFPName = rfpname;
             Path = path;
             xlApp = new Excel.Application();
             xlApp.DisplayAlerts = false;
             xlWorkBook = xlApp.Workbooks.Open(Path);
         }
-        
-        public void Dispose() {
+
+        public void Dispose()
+        {
             xlWorkBook.Close();
             xlApp.Quit();
             System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
             System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApp);
         }
 
-        public void update() {
+        public void update()
+        {
             xlWorkBook.Save();
         }
 

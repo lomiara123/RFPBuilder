@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Drawing;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -8,49 +8,54 @@ namespace RFPBuilder
 {
     public partial class MainForm : Form
     {
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
+        [SuppressMessage("ReSharper", "InconsistentNaming")] public const int WM_NCLBUTTONDOWN = 0xA1;
+        [SuppressMessage("ReSharper", "InconsistentNaming")] public const int HT_CAPTION = 0x2;
         private delegate void SafeCallDelegate();
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        string filePath = string.Empty;
-        string RFPName = string.Empty;
+        string _filePath = string.Empty;
+        string _rfpName = string.Empty;
 
-        public MainForm() {
+        public MainForm()
+        {
             InitializeComponent();
 
             loadingPanel.Visible = false;
 
-            if (!DBHandler.checkDatabaseExist()) {
-                DBHandler.createDB();
+            if (!DBHandler.CheckDatabaseExist())
+            {
+                DBHandler.CreateDb();
             }
         }
 
-        private void btnOpen_Click(object sender, EventArgs e) {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog()) {
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            using (var openFileDialog = new OpenFileDialog())
+            {
                 openFileDialog.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK) {
-                    filePath = openFileDialog.FileName;
-                    RFPName = Path.GetFileNameWithoutExtension(filePath);
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _filePath = openFileDialog.FileName;
+                    _rfpName = Path.GetFileNameWithoutExtension(_filePath);
                 }
             }
-            bool isMappingInitialized = false;
-            if (RFPName != "" && !DBHandler.checkResponseMappingExist(RFPName))
+            var isMappingInitialized = false;
+            if (_rfpName != "" && !DBHandler.CheckResponseMappingExist(_rfpName))
             {
                 isMappingInitialized = true;
-                DBHandler.initResponseMapping(RFPName);
+                DBHandler.InitResponseMapping(_rfpName);
             }
 
-            if (RFPName != "" && !DBHandler.checkPositionMappingExist(RFPName))
+            if (_rfpName != "" && !DBHandler.CheckPositionMappingExist(_rfpName))
             {
                 isMappingInitialized = true;
-                DBHandler.initPositionMapping(RFPName, filePath);
+                DBHandler.InitPositionMapping(_rfpName, _filePath);
             }
 
             if (isMappingInitialized)
@@ -59,14 +64,16 @@ namespace RFPBuilder
             }
         }
 
-        private void buttonClose_Click(object sender, EventArgs e) {
+        private void buttonClose_Click(object sender, EventArgs e)
+        {
             this.Close();
         }
 
-        private void btnMapping_Click(object sender, EventArgs e) {
+        private void btnMapping_Click(object sender, EventArgs e)
+        {
             this.Hide();
 
-            MappingForm mappingForm = new MappingForm(RFPName);
+            var mappingForm = new MappingForm(_rfpName);
             mappingForm.Left = this.Left;
             mappingForm.Top = this.Top;
             mappingForm.ShowDialog();
@@ -76,46 +83,52 @@ namespace RFPBuilder
             this.Show();
         }
 
-        private void topPanel_MouseDown(object sender, MouseEventArgs e) {
-            if (e.Button == MouseButtons.Left) {
+        private void topPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
 
-        private async void btnSave_Click(object sender, EventArgs e) {
-            setFormEnabled(false);
-            await Task.Factory.StartNew(() => DBHandler.saveRequirementsToDb(filePath, RFPName), TaskCreationOptions.LongRunning);
-            setFormEnabled(true);
+        private async void btnSave_Click(object sender, EventArgs e)
+        {
+            SetFormEnabled(false);
+            await Task.Factory.StartNew(() => DBHandler.SaveRequirementsToDb(_filePath, _rfpName), TaskCreationOptions.LongRunning);
+            SetFormEnabled(true);
         }
 
-        private async void btnUpdate_Click(object sender, EventArgs e) {
-            setFormEnabled(false);
-            await Task.Factory.StartNew(() => updateRfpDocument(), TaskCreationOptions.LongRunning);
-            setFormEnabled(true);
+        private async void btnUpdate_Click(object sender, EventArgs e)
+        {
+            SetFormEnabled(false);
+            await Task.Factory.StartNew(UpdateRfpDocument, TaskCreationOptions.LongRunning);
+            SetFormEnabled(true);
         }
 
-        private void setFormEnabled(bool set) {
+        private void SetFormEnabled(bool set)
+        {
             buttonsPanel.Enabled = set;
             mainPanel.Enabled = set;
             loadingPanel.Visible = !set;
         }
 
-        private void updateRfpDocument() {
+        private void UpdateRfpDocument()
+        {
             try
             {
-                if (filePath == null || filePath == "")
+                if (string.IsNullOrEmpty(_filePath))
                 {
                     return;
                 }
-                using (RFPDocument rfpDocument = new RFPDocument(filePath, RFPName))
+                using (var rfpDocument = new RFPDocument(_filePath, _rfpName))
                 {
                     foreach (var module in rfpDocument)
                     {
                         foreach (var requirement in module)
                         {
                             bool multipleResponses;
-                            (requirement.Response, requirement.Comments, multipleResponses) = DBHandler.getRequirement(RFPName, module.ModuleId, requirement.Id);
+                            (requirement.Response, requirement.Comments, multipleResponses) = DBHandler.GetRequirement(_rfpName, module.ModuleId, requirement.Id);
                             if (requirement.Response != "")
                             {
                                 module.updateRequirement(requirement, multipleResponses);
@@ -124,22 +137,24 @@ namespace RFPBuilder
                     }
                     rfpDocument.update();
                 }
-                File.SetLastWriteTime(filePath, DateTime.Now);
-            } 
+                File.SetLastWriteTime(_filePath, DateTime.Now);
+            }
             catch (Exception ex)
             {
                 _ = MessageBox.Show("Error occurred during updating RFP document. \n Error: " + ex.Message);
             }
         }
 
-        private void buttonMinimize_Click(object sender, EventArgs e) {
+        private void buttonMinimize_Click(object sender, EventArgs e)
+        {
             this.WindowState = FormWindowState.Minimized;
         }
 
-        private void btnView_Click(object sender, EventArgs e) {
+        private void btnView_Click(object sender, EventArgs e)
+        {
             this.Hide();
 
-            RFPForm rfpForm = new RFPForm(RFPName);
+            var rfpForm = new RFPForm(_rfpName);
             rfpForm.Left = this.Left;
             rfpForm.Top = this.Top;
             rfpForm.ShowDialog();

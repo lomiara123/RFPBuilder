@@ -241,7 +241,6 @@
             this.PositionMapGrid.TabIndex = 2;
             this.PositionMapGrid.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.PositionMapGrid_SortStringChanged);
             this.PositionMapGrid.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.PositionMapGrid_FilterStringChanged);
-            this.PositionMapGrid.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.PositionMapGrid_RowValidated);
             this.PositionMapGrid.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.PositionMapGrid_RowValidating);
             // 
             // MappingForm
