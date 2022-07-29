@@ -743,10 +743,18 @@ namespace RFPBuilder
             _viewRFPAdapter.Update(ds, ViewRFPMember);
         }
 
+        public static string tmp(string s1, string s2)
+        {
+            if (s1.Length > s2.Length)
+                return s1;
+            return s2;
+        }
+
         public static (string response, List<string> comments, bool multiple) GetRequirement(string RFPName, string ModuleId, string ReqID)
         {
             const string selectRequirementGlobal = "select * from MasterRFP order by ModifiedDatetime asc";
             var instance = new Cosine();
+            var damerau = new Damerau();
             var multipleResponse = false;
             double lastPrecision = 0;
             var response = "";
@@ -771,7 +779,7 @@ namespace RFPBuilder
                             {
                                 lastPrecision = similarity;
                                 response = reader["Response"].ToString(); ;
-                                comments.Add($"REQUIREMENTS IS {currentReq} \nSIMILARITY IS {similarity}");
+                                comments.Add($"REQUIREMENTS IS {currentReq} \nSIMILARITY IS {similarity} \nDamerau is {damerau.Distance(ReqID,currentReq) / tmp(ReqID, currentReq).Length}");
                             }
                             comments.Add(reader["Comments"].ToString());
                         }
