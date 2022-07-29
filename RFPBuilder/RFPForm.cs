@@ -78,15 +78,15 @@ namespace RFPBuilder
 
         private bool CheckDuplicateResponse(int currentRow)
         {
-            var rfpName = Convert.ToString(RFPGrid.Rows[currentRow].Cells["RFPName"].Value);
-            var reqId = Convert.ToString(RFPGrid.Rows[currentRow].Cells["ReqId"].Value);
-            var moduleId = Convert.ToString(RFPGrid.Rows[currentRow].Cells["ModuleId"].Value);
+            var rfpName = Convert.ToString(RFPGrid.Rows[currentRow].Cells["RFP"].Value);
+            var reqId = Convert.ToString(RFPGrid.Rows[currentRow].Cells["Requirement"].Value);
+            var moduleId = Convert.ToString(RFPGrid.Rows[currentRow].Cells["Module"].Value);
 
             for (var rowToCompare = 0; rowToCompare < _ds.Tables[_viewRfpMember].Rows.Count; rowToCompare++)
             {
-                var rfpNameToCompare = Convert.ToString(RFPGrid.Rows[rowToCompare].Cells["RFPName"].Value);
-                var reqIdToCompare = Convert.ToString(RFPGrid.Rows[rowToCompare].Cells["ReqId"].Value);
-                var moduleIdToCompare = Convert.ToString(RFPGrid.Rows[rowToCompare].Cells["ModuleId"].Value);
+                var rfpNameToCompare = Convert.ToString(RFPGrid.Rows[rowToCompare].Cells["RFP"].Value);
+                var reqIdToCompare = Convert.ToString(RFPGrid.Rows[rowToCompare].Cells["Requirement"].Value);
+                var moduleIdToCompare = Convert.ToString(RFPGrid.Rows[rowToCompare].Cells["Module"].Value);
 
                 if (reqId == reqIdToCompare && moduleId == moduleIdToCompare && rfpName == rfpNameToCompare && currentRow != rowToCompare)
                 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using F23.StringSimilarity;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -744,67 +745,101 @@ namespace RFPBuilder
 
         public static (string response, List<string> comments, bool multiple) GetRequirement(string RFPName, string ModuleId, string ReqID)
         {
-            const string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId order by ModifiedDatetime asc";
-            const string selectRequirementGlobal = "select * from MasterRFP where ReqId = @ReqId order by ModifiedDatetime asc";
-            const string selectCountOfResponses = "select count(distinct Response) from MasterRFP where ReqId = @ReqId";
-            var comments = new List<string>();
+            const string selectRequirementGlobal = "select * from MasterRFP order by ModifiedDatetime asc";
+            var instance = new Cosine();
+            var multipleResponse = false;
+            double lastPrecision = 0;
+            var response = "";
+            var comments = new List<String>();
             using (var con = new SqlConnection(DbConnectionRFP))
             {
                 con.Open();
-                var multipleResponses = false;
-                using (var command = new SqlCommand(selectCountOfResponses, con))
-                {
-                    command.Parameters.AddWithValue("@ReqId", ReqID);
-
-                    var reader = command.ExecuteReader();
-                    reader.Read();
-
-                    multipleResponses = (int)reader[0] > 1;
-
-                    reader.Close();
-                }
-
-                using (var command = new SqlCommand(selectRequirementByModule, con))
-                {
-                    command.Parameters.AddWithValue("@ReqId", ReqID);
-                    command.Parameters.AddWithValue("@ModuleId", ModuleId);
-
-                    var reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                    {
-                        var response = "";
-                        while (reader.Read())
-                        {
-                            response = DBHandler.GetCustomerResponse(RFPName, reader["Response"].ToString());
-                            comments.Add(reader["Comments"].ToString());
-                        }
-
-                        return (response, comments, multipleResponses);
-                    }
-                    reader.Close();
-                }
-
                 using (var command = new SqlCommand(selectRequirementGlobal, con))
                 {
-                    command.Parameters.AddWithValue("@ReqId", ReqID);
-
                     var reader = command.ExecuteReader();
-                    if (reader.HasRows)
+                    while(reader.Read())
                     {
-                        var response = "";
-                        while (reader.Read())
+                        var currentReq = reader["ReqId"].ToString();
+                        var similarity = instance.Similarity(ReqID, currentReq);
+                        if (similarity > 0.45)
                         {
-                            response = DBHandler.GetCustomerResponse(RFPName, reader["Response"].ToString());
+                            if (lastPrecision != 0)
+                            {
+                                multipleResponse = true;
+                            }
+                            if (similarity > lastPrecision)
+                            {
+                                lastPrecision = similarity;
+                                response = reader["Response"].ToString(); ;
+                                comments.Add($"REQUIREMENTS IS {currentReq} \nSIMILARITY IS {similarity}");
+                            }
                             comments.Add(reader["Comments"].ToString());
                         }
-
-                        return (response, comments, multipleResponses);
                     }
-                    reader.Close();
                 }
             }
+                /*
+                const string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId order by ModifiedDatetime asc";
+                const string selectRequirementGlobal = "select * from MasterRFP where ReqId = @ReqId order by ModifiedDatetime asc";
+                const string selectCountOfResponses = "select count(distinct Response) from MasterRFP where ReqId = @ReqId";
+                var comments = new List<string>();
+                using (var con = new SqlConnection(DbConnectionRFP))
+                {
+                    con.Open();
+                    var multipleResponses = false;
+                    using (var command = new SqlCommand(selectCountOfResponses, con))
+                    {
+                        command.Parameters.AddWithValue("@ReqId", ReqID);
 
-            return ("", new List<string> { "" }, false);
+                        var reader = command.ExecuteReader();
+                        reader.Read();
+
+                        multipleResponses = (int)reader[0] > 1;
+
+                        reader.Close();
+                    }
+
+                    using (var command = new SqlCommand(selectRequirementByModule, con))
+                    {
+                        command.Parameters.AddWithValue("@ReqId", ReqID);
+                        command.Parameters.AddWithValue("@ModuleId", ModuleId);
+
+                        var reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            var response = "";
+                            while (reader.Read())
+                            {
+                                response = DBHandler.GetCustomerResponse(RFPName, reader["Response"].ToString());
+                                comments.Add(reader["Comments"].ToString());
+                            }
+
+                            return (response, comments, multipleResponses);
+                        }
+                        reader.Close();
+                    }
+
+                    using (var command = new SqlCommand(selectRequirementGlobal, con))
+                    {
+                        command.Parameters.AddWithValue("@ReqId", ReqID);
+
+                        var reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            var response = "";
+                            while (reader.Read())
+                            {
+                                response = DBHandler.GetCustomerResponse(RFPName, reader["Response"].ToString());
+                                comments.Add(reader["Comments"].ToString());
+                            }
+
+                            return (response, comments, multipleResponses);
+                        }
+                        reader.Close();
+                    }
+                }
+                */
+                return (response, comments, multipleResponse);
         }
 
         public static string GetCustomerResponse(string RFPName, string Response)
