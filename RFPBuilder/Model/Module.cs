@@ -52,6 +52,7 @@ namespace RFPBuilder
 
         public void updateRequirement(Requirement requirement, bool multipleResponses)
         {
+            /*
             if (Convert.ToString(xlRange.Cells[row, responseColumn].Value) == "" || xlRange.Cells[row, responseColumn].Value == null)
             {
                 if (multipleResponses)
@@ -64,6 +65,10 @@ namespace RFPBuilder
                 }
                 xlRange.Cells[row, responseColumn].Value = requirement.Response;
             }
+            */
+            xlRange.Cells[row, responseColumn].Interior.Color = Excel.XlRgbColor.rgbGreen;
+            xlRange.Cells[row, responseColumn].Value = requirement.Response;
+
             if (commentsColumn != null || commentsColumn != "")
             {
                 for (int i = 0; i < requirement.Comments.Count; i++)

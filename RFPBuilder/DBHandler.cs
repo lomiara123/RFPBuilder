@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -743,22 +744,14 @@ namespace RFPBuilder
             _viewRFPAdapter.Update(ds, ViewRFPMember);
         }
 
-        public static string tmp(string s1, string s2)
-        {
-            if (s1.Length > s2.Length)
-                return s1;
-            return s2;
-        }
 
-        public static (string response, List<string> comments, bool multiple) GetRequirement(string RFPName, string ModuleId, string ReqID)
+        public static async Task<(string response, List<string> commentsList, bool multipleResponses)> GetRequirement(string RFPName, string ModuleId, string ReqID)
         {
             const string selectRequirementGlobal = "select * from MasterRFP order by ModifiedDatetime asc";
-            var instance = new Cosine();
-            var damerau = new Damerau();
             var multipleResponse = false;
             double lastPrecision = 0;
             var response = "";
-            var comments = new List<String>();
+            var commentsList = new List<String>();
             using (var con = new SqlConnection(DbConnectionRFP))
             {
                 con.Open();
@@ -768,86 +761,25 @@ namespace RFPBuilder
                     while(reader.Read())
                     {
                         var currentReq = reader["ReqId"].ToString();
-                        var similarity = instance.Similarity(ReqID, currentReq);
+                        var similarity = await ApiManager.findRequirementsSimilarity(ReqID, currentReq);
                         if (similarity > 0.45)
                         {
-                            if (lastPrecision != 0)
+                            if (lastPrecision != 0 && !response.Equals(reader["Response"].ToString()))
                             {
                                 multipleResponse = true;
                             }
-                            if (similarity > lastPrecision)
-                            {
-                                lastPrecision = similarity;
-                                response = reader["Response"].ToString(); ;
-                                comments.Add($"REQUIREMENTS IS {currentReq} \nSIMILARITY IS {similarity} \nDamerau is {damerau.Distance(ReqID,currentReq) / tmp(ReqID, currentReq).Length}");
-                            }
-                            comments.Add(reader["Comments"].ToString());
+                            
+                            var comments = reader["Comments"].ToString();
+                            if (comments != null && comments != "")
+                                commentsList.Add(comments);
+
+                            lastPrecision = similarity;
+                            response = reader["Response"].ToString();
                         }
                     }
                 }
             }
-                /*
-                const string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId order by ModifiedDatetime asc";
-                const string selectRequirementGlobal = "select * from MasterRFP where ReqId = @ReqId order by ModifiedDatetime asc";
-                const string selectCountOfResponses = "select count(distinct Response) from MasterRFP where ReqId = @ReqId";
-                var comments = new List<string>();
-                using (var con = new SqlConnection(DbConnectionRFP))
-                {
-                    con.Open();
-                    var multipleResponses = false;
-                    using (var command = new SqlCommand(selectCountOfResponses, con))
-                    {
-                        command.Parameters.AddWithValue("@ReqId", ReqID);
-
-                        var reader = command.ExecuteReader();
-                        reader.Read();
-
-                        multipleResponses = (int)reader[0] > 1;
-
-                        reader.Close();
-                    }
-
-                    using (var command = new SqlCommand(selectRequirementByModule, con))
-                    {
-                        command.Parameters.AddWithValue("@ReqId", ReqID);
-                        command.Parameters.AddWithValue("@ModuleId", ModuleId);
-
-                        var reader = command.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            var response = "";
-                            while (reader.Read())
-                            {
-                                response = DBHandler.GetCustomerResponse(RFPName, reader["Response"].ToString());
-                                comments.Add(reader["Comments"].ToString());
-                            }
-
-                            return (response, comments, multipleResponses);
-                        }
-                        reader.Close();
-                    }
-
-                    using (var command = new SqlCommand(selectRequirementGlobal, con))
-                    {
-                        command.Parameters.AddWithValue("@ReqId", ReqID);
-
-                        var reader = command.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            var response = "";
-                            while (reader.Read())
-                            {
-                                response = DBHandler.GetCustomerResponse(RFPName, reader["Response"].ToString());
-                                comments.Add(reader["Comments"].ToString());
-                            }
-
-                            return (response, comments, multipleResponses);
-                        }
-                        reader.Close();
-                    }
-                }
-                */
-                return (response, comments, multipleResponse);
+                return (response, commentsList, multipleResponse);
         }
 
         public static string GetCustomerResponse(string RFPName, string Response)

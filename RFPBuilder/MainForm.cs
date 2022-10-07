@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -29,6 +32,8 @@ namespace RFPBuilder
             {
                 DBHandler.CreateDb();
             }
+
+            ApiManager.init();
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -113,7 +118,7 @@ namespace RFPBuilder
             loadingPanel.Visible = !set;
         }
 
-        private void UpdateRfpDocument()
+        private async Task UpdateRfpDocument()
         {
             try
             {
@@ -128,7 +133,7 @@ namespace RFPBuilder
                         foreach (var requirement in module)
                         {
                             bool multipleResponses;
-                            (requirement.Response, requirement.Comments, multipleResponses) = DBHandler.GetRequirement(_rfpName, module.ModuleId, requirement.Id);
+                            (requirement.Response, requirement.Comments, multipleResponses) = await DBHandler.GetRequirement(_rfpName, module.ModuleId, requirement.Id);
                             if (requirement.Response != "")
                             {
                                 module.updateRequirement(requirement, multipleResponses);
@@ -162,6 +167,38 @@ namespace RFPBuilder
             this.Left = rfpForm.Left;
             this.Top = rfpForm.Top;
             this.Show();
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            HttpClient client = new HttpClient();
+            string url = "https://api.dandelion.eu/datatxt/sim/v1/?";
+            this.addParams(ref url, "lang", "en");
+            this.addParams(ref url, "&text1", "Provides the ability to drill-down and drill-across from a transaction view to the supporting source data and documents.");
+            this.addParams(ref url, "&text2", "The system has the ability to drill-down to supporting documents or transactions throughout the purchasing application/module.");
+            this.addParams(ref url, "&token", "9f1868cdd4e44595a163c604c8e23e53");
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Connection", "keep-alive");
+            using(var response = await client.SendAsync(request))
+            { 
+                response.EnsureSuccessStatusCode();
+                try
+                { 
+                    var contents = await response.Content.ReadAsStringAsync();
+                    var json = JObject.Parse(contents);
+                    json.GetValue("similarity");
+                } catch (Exception ex)
+                {
+                    MessageBox.Show("Error occurred for comparing requirements similarity. \n Error: " + ex.Message);
+                    throw;
+                }
+            }
+            
+        }
+
+        private void addParams(ref string url, string paramName, string paramValue)
+        {
+            url += paramName + "=" + paramValue ;
         }
     }
 }
