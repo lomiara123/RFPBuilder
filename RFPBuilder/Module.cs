@@ -28,8 +28,8 @@ namespace RFPBuilder
                         continue;
                     }
                     string response = Convert.ToString(xlRange.Cells[row, responseColumn].Value2);
-                    string comments = commentsColumn == "" || commentsColumn != null ? "" : Convert.ToString(xlRange.Cells[row, commentsColumn].Value2);
-                    string criticality = criticalityColumn == null || criticalityColumn == "" ? "" : Convert.ToString(xlRange.Cells[row, criticalityColumn].Value2);
+                    string comments = string.IsNullOrEmpty(commentsColumn) ? "" : Convert.ToString(xlRange.Cells[row, commentsColumn].Value2);
+                    string criticality = string.IsNullOrEmpty(criticalityColumn) ? "" : Convert.ToString(xlRange.Cells[row, criticalityColumn].Value2);
 
                     yield return new Requirement(requirement,
                                                  response,
@@ -64,7 +64,7 @@ namespace RFPBuilder
                 }
                 xlRange.Cells[row, responseColumn].Value = requirement.Response;
             }
-            if (commentsColumn != null || commentsColumn != "")
+            if (!string.IsNullOrEmpty(commentsColumn))
             {
                 for (int i = 0; i < requirement.Comments.Count; i++)
                 {

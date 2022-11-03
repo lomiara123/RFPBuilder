@@ -753,8 +753,8 @@ namespace RFPBuilder
         public static (string response, List<string> comments, bool multiple) GetRequirement(string RFPName, string ModuleId, string ReqID)
         {
             const string selectRequirementGlobal = "select * from MasterRFP order by ModifiedDatetime asc";
+            const string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId order by ModifiedDatetime asc";
             var instance = new Cosine();
-            var damerau = new Damerau();
             var multipleResponse = false;
             double lastPrecision = 0;
             var response = "";
@@ -762,51 +762,9 @@ namespace RFPBuilder
             using (var con = new SqlConnection(DbConnectionRFP))
             {
                 con.Open();
-                using (var command = new SqlCommand(selectRequirementGlobal, con))
+
+                if (!String.IsNullOrEmpty(ModuleId))
                 {
-                    var reader = command.ExecuteReader();
-                    while(reader.Read())
-                    {
-                        var currentReq = reader["ReqId"].ToString();
-                        var similarity = instance.Similarity(ReqID, currentReq);
-                        if (similarity > 0.45)
-                        {
-                            if (lastPrecision != 0)
-                            {
-                                multipleResponse = true;
-                            }
-                            if (similarity > lastPrecision)
-                            {
-                                lastPrecision = similarity;
-                                response = reader["Response"].ToString(); ;
-                                comments.Add($"REQUIREMENTS IS {currentReq} \nSIMILARITY IS {similarity} \nDamerau is {damerau.Distance(ReqID,currentReq) / tmp(ReqID, currentReq).Length}");
-                            }
-                            comments.Add(reader["Comments"].ToString());
-                        }
-                    }
-                }
-            }
-                /*
-                const string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId order by ModifiedDatetime asc";
-                const string selectRequirementGlobal = "select * from MasterRFP where ReqId = @ReqId order by ModifiedDatetime asc";
-                const string selectCountOfResponses = "select count(distinct Response) from MasterRFP where ReqId = @ReqId";
-                var comments = new List<string>();
-                using (var con = new SqlConnection(DbConnectionRFP))
-                {
-                    con.Open();
-                    var multipleResponses = false;
-                    using (var command = new SqlCommand(selectCountOfResponses, con))
-                    {
-                        command.Parameters.AddWithValue("@ReqId", ReqID);
-
-                        var reader = command.ExecuteReader();
-                        reader.Read();
-
-                        multipleResponses = (int)reader[0] > 1;
-
-                        reader.Close();
-                    }
-
                     using (var command = new SqlCommand(selectRequirementByModule, con))
                     {
                         command.Parameters.AddWithValue("@ReqId", ReqID);
@@ -815,39 +773,64 @@ namespace RFPBuilder
                         var reader = command.ExecuteReader();
                         if (reader.HasRows)
                         {
-                            var response = "";
                             while (reader.Read())
                             {
-                                response = DBHandler.GetCustomerResponse(RFPName, reader["Response"].ToString());
-                                comments.Add(reader["Comments"].ToString());
+                                var currentReq = reader["ReqId"].ToString();
+                                var similarity = instance.Similarity(ReqID, currentReq);
+                                if (similarity > 0.45)
+                                {
+                                    if (lastPrecision != 0 && response != reader["Response"].ToString())
+                                    {
+                                        multipleResponse = true;
+                                    }
+
+                                    if (similarity > lastPrecision)
+                                    {
+                                        lastPrecision = similarity;
+                                        response = reader["Response"].ToString();
+                                    }
+
+                                    if (!string.IsNullOrEmpty(reader["Comments"].ToString()))
+                                        comments.Add(reader["Comments"].ToString());
+                                }
                             }
 
-                            return (response, comments, multipleResponses);
                         }
-                        reader.Close();
-                    }
 
-                    using (var command = new SqlCommand(selectRequirementGlobal, con))
-                    {
-                        command.Parameters.AddWithValue("@ReqId", ReqID);
-
-                        var reader = command.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            var response = "";
-                            while (reader.Read())
-                            {
-                                response = DBHandler.GetCustomerResponse(RFPName, reader["Response"].ToString());
-                                comments.Add(reader["Comments"].ToString());
-                            }
-
-                            return (response, comments, multipleResponses);
-                        }
                         reader.Close();
                     }
                 }
-                */
-                return (response, comments, multipleResponse);
+
+                if (lastPrecision == 0)
+                {
+                    using (var command = new SqlCommand(selectRequirementGlobal, con))
+                    {
+                        var reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            var currentReq = reader["ReqId"].ToString();
+                            var similarity = instance.Similarity(ReqID, currentReq);
+                            if (similarity > 0.45)
+                            {
+                                if (lastPrecision != 0 && response != reader["Response"].ToString())
+                                {
+                                    multipleResponse = true;
+                                }
+
+                                if (similarity > lastPrecision)
+                                {
+                                    lastPrecision = similarity;
+                                    response = reader["Response"].ToString();
+                                }
+
+                                if (!string.IsNullOrEmpty(reader["Comments"].ToString()))
+                                    comments.Add(reader["Comments"].ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            return (response, comments, multipleResponse);
         }
 
         public static string GetCustomerResponse(string RFPName, string Response)

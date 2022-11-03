@@ -264,7 +264,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "RFP Builder";
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
             this.buttonsPanel.ResumeLayout(false);

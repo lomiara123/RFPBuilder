@@ -254,7 +254,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MappingForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Form1";
+            this.Text = "RFP Builder";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.Mapping.ResumeLayout(false);
