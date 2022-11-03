@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -743,94 +744,42 @@ namespace RFPBuilder
             _viewRFPAdapter.Update(ds, ViewRFPMember);
         }
 
-        public static string tmp(string s1, string s2)
-        {
-            if (s1.Length > s2.Length)
-                return s1;
-            return s2;
-        }
 
-        public static (string response, List<string> comments, bool multiple) GetRequirement(string RFPName, string ModuleId, string ReqID)
+        public static async Task<(string response, List<string> commentsList, bool multipleResponses)> GetRequirement(string RFPName, string ModuleId, string ReqID)
         {
             const string selectRequirementGlobal = "select * from MasterRFP order by ModifiedDatetime asc";
-            const string selectRequirementByModule = "select * from MasterRFP where ReqId = @ReqId and ModuleId = @ModuleId order by ModifiedDatetime asc";
-            var instance = new Cosine();
             var multipleResponse = false;
             double lastPrecision = 0;
             var response = "";
-            var comments = new List<String>();
+            var commentsList = new List<String>();
             using (var con = new SqlConnection(DbConnectionRFP))
             {
                 con.Open();
-
-                if (!String.IsNullOrEmpty(ModuleId))
+                using (var command = new SqlCommand(selectRequirementGlobal, con))
                 {
-                    using (var command = new SqlCommand(selectRequirementByModule, con))
+                    var reader = command.ExecuteReader();
+                    while(reader.Read())
                     {
-                        command.Parameters.AddWithValue("@ReqId", ReqID);
-                        command.Parameters.AddWithValue("@ModuleId", ModuleId);
-
-                        var reader = command.ExecuteReader();
-                        if (reader.HasRows)
+                        var currentReq = reader["ReqId"].ToString();
+                        var similarity = await ApiManager.findRequirementsSimilarity(ReqID, currentReq);
+                        if (similarity > 0.45)
                         {
-                            while (reader.Read())
+                            if (lastPrecision != 0 && !response.Equals(reader["Response"].ToString()))
                             {
-                                var currentReq = reader["ReqId"].ToString();
-                                var similarity = instance.Similarity(ReqID, currentReq);
-                                if (similarity > 0.45)
-                                {
-                                    if (lastPrecision != 0 && response != reader["Response"].ToString())
-                                    {
-                                        multipleResponse = true;
-                                    }
-
-                                    if (similarity > lastPrecision)
-                                    {
-                                        lastPrecision = similarity;
-                                        response = reader["Response"].ToString();
-                                    }
-
-                                    if (!string.IsNullOrEmpty(reader["Comments"].ToString()))
-                                        comments.Add(reader["Comments"].ToString());
-                                }
+                                multipleResponse = true;
                             }
+                            
+                            var comments = reader["Comments"].ToString();
+                            if (comments != null && comments != "")
+                                commentsList.Add(comments);
 
-                        }
-
-                        reader.Close();
-                    }
-                }
-
-                if (lastPrecision == 0)
-                {
-                    using (var command = new SqlCommand(selectRequirementGlobal, con))
-                    {
-                        var reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            var currentReq = reader["ReqId"].ToString();
-                            var similarity = instance.Similarity(ReqID, currentReq);
-                            if (similarity > 0.45)
-                            {
-                                if (lastPrecision != 0 && response != reader["Response"].ToString())
-                                {
-                                    multipleResponse = true;
-                                }
-
-                                if (similarity > lastPrecision)
-                                {
-                                    lastPrecision = similarity;
-                                    response = reader["Response"].ToString();
-                                }
-
-                                if (!string.IsNullOrEmpty(reader["Comments"].ToString()))
-                                    comments.Add(reader["Comments"].ToString());
-                            }
+                            lastPrecision = similarity;
+                            response = reader["Response"].ToString();
                         }
                     }
                 }
             }
-            return (response, comments, multipleResponse);
+                return (response, commentsList, multipleResponse);
         }
 
         public static string GetCustomerResponse(string RFPName, string Response)
